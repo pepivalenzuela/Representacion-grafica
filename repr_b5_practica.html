@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloque 5 · Práctica — Representación gráfica · Las Chapas ECOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+<style>
+  :root{
+    --navy:#1a2e4a; --navy-light:#2a4468; --teal:#1d7a6b; --teal-light:#e4f2ef;
+    --orange:#e07b3a; --orange-light:#fdeee0; --cream:#f5f2eb; --ink:#2b2b2b;
+    --muted:#6b6f76; --white:#ffffff; --line:#e4e0d6;
+    --red:#c65b4a; --red-light:#fbeae7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Nunito Sans',sans-serif;background:var(--cream);color:var(--ink);line-height:1.6}
+  h1,h2,h3,.brand{font-family:'Nunito',sans-serif}
+  a{color:inherit;text-decoration:none}
+
+  header.top{background:var(--navy);color:#fff;padding:14px 24px;display:flex;align-items:center;gap:8px;font-size:.88rem;font-weight:600;flex-wrap:wrap}
+  header.top a{color:#cfd8e6}
+  header.top a:hover{color:#fff}
+  header.top .sep{color:#5c6b82}
+  header.top .current{color:#fff;font-weight:800}
+
+  .wrap{max-width:720px;margin:0 auto;padding:30px 24px 60px}
+
+  .titlebar{text-align:center;margin-bottom:22px}
+  .titlebar .kicker{display:inline-block;background:var(--teal-light);color:var(--teal);font-weight:800;font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;padding:6px 14px;border-radius:100px;margin-bottom:12px}
+  .titlebar h1{font-size:1.6rem;color:var(--navy);margin:0 0 6px;font-weight:900}
+  .titlebar p{color:var(--muted);margin:0;font-size:.95rem}
+
+  #gate{background:#fff;border:1px solid var(--line);border-radius:16px;padding:28px;text-align:center}
+  #gate input{width:100%;max-width:340px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;font-size:1rem;font-family:inherit;margin:14px 0}
+  .btn{display:inline-block;padding:13px 26px;border-radius:10px;font-weight:800;font-size:.95rem;border:none;cursor:pointer;font-family:inherit}
+  .btn.on{background:var(--teal);color:#fff}
+  .btn.on:hover{background:#166357}
+  .btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+  .btn.ghost:hover{background:#f0ede4}
+  .btn:disabled{opacity:.5;cursor:default}
+
+  #quiz{display:none}
+  .scoreboard{display:flex;justify-content:space-between;align-items:center;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 20px;margin-bottom:18px;font-weight:700;color:var(--navy);font-size:.9rem}
+  .scoreboard .ok{color:var(--teal)}
+  .scoreboard .bad{color:var(--red)}
+
+  .qcard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px}
+  .qtag{display:inline-block;font-weight:800;font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;padding:4px 10px;border-radius:100px;margin-bottom:14px}
+  .qtag.teoria{background:var(--teal-light);color:var(--teal)}
+  .qtag.aplicacion{background:var(--orange-light);color:var(--orange)}
+  .qtext{font-size:1.15rem;color:var(--navy);font-weight:700;margin-bottom:20px}
+
+  .opt{display:block;width:100%;text-align:left;background:#fbfbf9;border:1.5px solid var(--line);border-radius:10px;padding:13px 16px;margin-bottom:10px;font-family:inherit;font-size:1rem;cursor:pointer;color:var(--ink)}
+  .opt:hover{border-color:var(--teal)}
+  .opt.correcta{background:var(--teal-light);border-color:var(--teal);color:var(--navy);font-weight:700}
+  .opt.incorrecta{background:var(--red-light);border-color:var(--red);color:#8a3a2e;font-weight:700}
+  .opt:disabled{cursor:default}
+
+  .feedback{margin-top:16px;padding:14px 16px;border-radius:10px;font-size:.92rem;display:none}
+  .feedback.show{display:block}
+  .feedback.ok{background:var(--teal-light);color:#12574c}
+  .feedback.bad{background:var(--red-light);color:#8a3a2e}
+
+  .controls{display:flex;justify-content:flex-end;margin-top:20px}
+
+  .nav-bottom{display:flex;justify-content:space-between;margin-top:28px}
+  @media (max-width:600px){ .wrap{padding:0 16px} }
+  mjx-container{max-width:100%;overflow-x:auto;overflow-y:hidden}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a href="index.html">Portal de Representación gráfica</a>
+  <span class="sep">·</span>
+  <a href="repr_b5_intro.html">Bloque 5</a>
+  <span class="sep">·</span>
+  <span class="current">Práctica libre</span>
+</header>
+
+<div class="wrap">
+  <div class="titlebar">
+    <span class="kicker">Bloque 5 · Práctica libre</span>
+    <h1>Funciones logarítmicas</h1>
+    <p>Preguntas aleatorias de teoría y de aplicación del bloque, con la explicación de cada respuesta. Cada vez que entras, el orden cambia. Ten a mano lápiz, papel y la calculadora.</p>
+  </div>
+
+  <div id="gate">
+    <p style="margin:0;color:var(--muted)">Escribe tu nombre para empezar (no hay límite de tiempo ni de intentos):</p>
+    <input type="text" id="nombre" placeholder="Nombre y apellidos">
+    <br>
+    <button class="btn on" onclick="empezar()">Empezar a practicar →</button>
+  </div>
+
+  <div id="quiz">
+    <div class="scoreboard">
+      <span id="contador">Pregunta 1</span>
+      <span><span class="ok" id="okcount">0</span> correctas · <span class="bad" id="badcount">0</span> incorrectas</span>
+    </div>
+
+    <div class="qcard">
+      <span class="qtag" id="qtag">Teoría</span>
+      <div class="qtext" id="qtext">—</div>
+      <div id="opciones"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="controls">
+        <button class="btn on" id="btnSiguiente" onclick="siguiente()" disabled>Siguiente pregunta →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-bottom" style="flex-wrap:wrap;gap:12px">
+    <a class="btn ghost" href="index.html">🏠 Portal</a>
+    <a class="btn ghost" href="repr_b5_intro.html">← Volver a la teoría</a>
+    <a class="btn on" href="https://pepivalenzuela.github.io/panel-matematicas/#panel">Formativas en mi panel →</a>
+    <a class="btn ghost" href="repr_b6_intro.html">Bloque 6 →</a>
+  </div>
+</div>
+
+<script>
+// ---------- Banco de preguntas del bloque
+const BANCO_TEORIA = [
+ {
+  "q": "¿Cuál es el dominio de \\(f(x) = \\ln x\\)?",
+  "o": [
+   "(0, +∞)",
+   "[0, +∞)",
+   "ℝ",
+   "ℝ − {0}"
+  ],
+  "c": 0,
+  "e": "Solo existe el logaritmo de números positivos."
+ },
+ {
+  "q": "¿Cuánto vale \\(\\ln 1\\)?",
+  "o": [
+   "1",
+   "No existe",
+   "e",
+   "0"
+  ],
+  "c": 3,
+  "e": "e⁰ = 1."
+ },
+ {
+  "q": "¿Qué asíntota tiene \\(f(x) = \\ln x\\)?",
+  "o": [
+   "AH y = 0",
+   "No tiene",
+   "AV x = 1",
+   "AV x = 0"
+  ],
+  "c": 3,
+  "e": "ln x → −∞ cuando x → 0⁺."
+ },
+ {
+  "q": "¿Qué hace \\(f(x) = \\ln x\\) en su dominio?",
+  "o": [
+   "Tiene un mínimo en x = 1",
+   "Tiene un máximo en x = 1",
+   "Crece",
+   "Decrece"
+  ],
+  "c": 2,
+  "e": "f′(x) = 1/x &gt; 0 para x &gt; 0."
+ },
+ {
+  "q": "¿Cuál es la derivada de \\(\\ln g(x)\\)?",
+  "o": [
+   "\\(\\dfrac{g(x)}{g'(x)}\\)",
+   "\\(g'(x)\\ln g(x)\\)",
+   "\\(\\dfrac{g'(x)}{g(x)}\\)",
+   "\\(\\dfrac{1}{g(x)}\\)"
+  ],
+  "c": 2,
+  "e": "Regla de la cadena."
+ },
+ {
+  "q": "¿Qué relación hay entre \\(\\ln x\\) y \\(e^x\\)?",
+  "o": [
+   "Una es la derivada de la otra",
+   "Son simétricas respecto al eje OY",
+   "Son inversas: sus gráficas son simétricas respecto a y = x",
+   "Son iguales"
+  ],
+  "c": 2,
+  "e": "ln(eˣ) = x y e^(ln x) = x."
+ },
+ {
+  "q": "¿Cuánto vale \\(\\lim_{x\\to+\\infty}\\dfrac{\\ln x}{x}\\)?",
+  "o": [
+   "\\(+\\infty\\)",
+   "e",
+   "1",
+   "0"
+  ],
+  "c": 3,
+  "e": "L'Hôpital: (1/x)/1 → 0. El logaritmo crece más despacio que x."
+ },
+ {
+  "q": "¿Qué curvatura tiene \\(f(x) = \\ln x\\)?",
+  "o": [
+   "Cóncava ∪ en todo su dominio",
+   "Cambia en x = e",
+   "Tiene una inflexión en x = 1",
+   "Cóncava ∩ en todo su dominio"
+  ],
+  "c": 3,
+  "e": "f″(x) = −1/x² &lt; 0."
+ },
+ {
+  "q": "Si 0 &lt; a &lt; 1, la función \\(\\log_a x\\) es…",
+  "o": [
+   "Par",
+   "Creciente",
+   "Constante",
+   "Decreciente"
+  ],
+  "c": 3,
+  "e": "log_a x = ln x / ln a y ln a &lt; 0."
+ },
+ {
+  "q": "¿Cuál es el dominio de \\(f(x) = \\ln(x^2+1)\\)?",
+  "o": [
+   "ℝ",
+   "(−1, +∞)",
+   "ℝ − {0}",
+   "(0, +∞)"
+  ],
+  "c": 0,
+  "e": "x² + 1 &gt; 0 siempre: no tiene asíntotas verticales."
+ },
+ {
+  "q": "¿Qué simetría tiene \\(f(x) = \\ln|x|\\)?",
+  "o": [
+   "Ninguna",
+   "Es par",
+   "Es impar",
+   "Respecto a y = x"
+  ],
+  "c": 1,
+  "e": "f(−x) = ln|−x| = ln|x|."
+ },
+ {
+  "q": "¿Cómo se escribe \\(\\log_a x\\) con logaritmos neperianos?",
+  "o": [
+   "\\(\\dfrac{\\ln x}{\\ln a}\\)",
+   "\\(\\ln x - \\ln a\\)",
+   "\\(a\\ln x\\)",
+   "\\(\\dfrac{\\ln a}{\\ln x}\\)"
+  ],
+  "c": 0,
+  "e": "Cambio de base."
+ },
+ {
+  "q": "¿Cuánto vale \\(\\lim_{x\\to0^+} x\\ln x\\)?",
+  "o": [
+   "0",
+   "\\(+\\infty\\)",
+   "1",
+   "\\(-\\infty\\)"
+  ],
+  "c": 0,
+  "e": "ln x / (1/x) y L'Hôpital: (1/x)/(−1/x²) = −x → 0."
+ },
+ {
+  "q": "¿Qué afirmación es correcta?",
+  "o": [
+   "\\(\\ln(a + b) = \\ln a + \\ln b\\)",
+   "\\(\\ln(a^n) = (\\ln a)^n\\)",
+   "\\(\\ln(ab) = \\ln a \\cdot \\ln b\\)",
+   "\\(\\ln(ab) = \\ln a + \\ln b\\)"
+  ],
+  "c": 3,
+  "e": "El logaritmo de un producto es la suma de los logaritmos."
+ },
+ {
+  "q": "Para buscar las asíntotas verticales de \\(\\ln g(x)\\) hay que mirar…",
+  "o": [
+   "Donde g(x) = 1",
+   "Solo x = 0",
+   "Donde g′(x) = 0",
+   "Los puntos donde g(x) → 0⁺ (bordes del dominio)"
+  ],
+  "c": 3,
+  "e": "Ahí el logaritmo tiende a −∞."
+ },
+ {
+  "q": "¿Tiene siempre asíntota vertical una función con \\(\\ln x\\) en x = 0?",
+  "o": [
+   "Sí, siempre",
+   "Nunca",
+   "Sí, si es positiva",
+   "No: hay que calcular el límite (x·ln x tiende a 0)"
+  ],
+  "c": 3,
+  "e": "Si el límite es finito no hay AV."
+ }
+];
+
+const BANCO_APLICACION = [
+ {
+  "q": "¿Cuál es el dominio de \\(f(x) = \\ln(2x-6)\\)?",
+  "o": [
+   "(3, +∞)",
+   "[3, +∞)",
+   "(6, +∞)",
+   "(−∞, 3)"
+  ],
+  "c": 0,
+  "e": "2x − 6 &gt; 0 ⇒ x &gt; 3."
+ },
+ {
+  "q": "¿Cuál es el dominio de \\(f(x) = \\ln(x^2-4x)\\)?",
+  "o": [
+   "ℝ − {0, 4}",
+   "(0, 4)",
+   "(4, +∞)",
+   "\\((-\\infty, 0)\\cup(4, +\\infty)\\)"
+  ],
+  "c": 3,
+  "e": "x(x − 4) &gt; 0 fuera de las raíces."
+ },
+ {
+  "q": "¿Cuál es la asíntota vertical de \\(f(x) = \\ln(x-2)\\)?",
+  "o": [
+   "y = 2",
+   "x = 2",
+   "x = 0",
+   "x = 3"
+  ],
+  "c": 1,
+  "e": "x − 2 → 0⁺ cuando x → 2⁺."
+ },
+ {
+  "q": "¿En qué punto corta al eje OX \\(f(x) = \\ln(x-2)\\)?",
+  "o": [
+   "(2, 0)",
+   "No lo corta",
+   "(1, 0)",
+   "(3, 0)"
+  ],
+  "c": 3,
+  "e": "x − 2 = 1."
+ },
+ {
+  "q": "¿Cuál es el mínimo de \\(f(x) = x\\ln x\\)?",
+  "o": [
+   "No tiene",
+   "(e, e)",
+   "(1, 0)",
+   "\\(\\left(\\frac1e, -\\frac1e\\right)\\)"
+  ],
+  "c": 3,
+  "e": "f′ = ln x + 1 = 0 ⇒ x = 1/e."
+ },
+ {
+  "q": "¿Cuál es el máximo de \\(f(x) = \\dfrac{\\ln x}{x}\\)?",
+  "o": [
+   "(1, 0)",
+   "\\(\\left(\\frac1e, -e\\right)\\)",
+   "\\(\\left(e, \\frac1e\\right)\\)",
+   "No tiene"
+  ],
+  "c": 2,
+  "e": "f′ = (1 − ln x)/x² = 0 ⇒ x = e."
+ },
+ {
+  "q": "¿En qué abscisa tiene inflexión \\(f(x) = \\dfrac{\\ln x}{x}\\)?",
+  "o": [
+   "x = e",
+   "\\(x = \\sqrt e\\)",
+   "\\(x = e^2\\)",
+   "\\(x = e^{3/2}\\)"
+  ],
+  "c": 3,
+  "e": "f″ = (2ln x − 3)/x³ = 0 ⇒ ln x = 3/2."
+ },
+ {
+  "q": "¿Cuál es el mínimo de \\(f(x) = \\ln(x^2+1)\\)?",
+  "o": [
+   "(0, 0)",
+   "(1, ln 2)",
+   "(0, 1)",
+   "No tiene"
+  ],
+  "c": 0,
+  "e": "f′ = 2x/(x² + 1): − antes de 0 y + después."
+ },
+ {
+  "q": "¿En qué puntos tiene inflexión \\(f(x) = \\ln(x^2+1)\\)?",
+  "o": [
+   "(0, 0)",
+   "\\((\\pm1, \\ln 2)\\)",
+   "No tiene",
+   "\\((\\pm\\sqrt2, \\ln 3)\\)"
+  ],
+  "c": 1,
+  "e": "f″ = 2(1 − x²)/(x² + 1)² cambia de signo en ±1."
+ },
+ {
+  "q": "¿Cuál es el mínimo de \\(f(x) = x - \\ln x\\)?",
+  "o": [
+   "(e, e − 1)",
+   "(1, 1)",
+   "(1, 0)",
+   "No tiene"
+  ],
+  "c": 1,
+  "e": "f′ = 1 − 1/x = 0 ⇒ x = 1; f(1) = 1."
+ },
+ {
+  "q": "¿Cuál es el mínimo de \\(f(x) = x^2\\ln x\\)?",
+  "o": [
+   "No tiene",
+   "(1, 0)",
+   "\\(\\left(\\frac{1}{\\sqrt e}, -\\frac{1}{2e}\\right)\\)",
+   "\\(\\left(\\frac1e, -\\frac{1}{e^2}\\right)\\)"
+  ],
+  "c": 2,
+  "e": "f′ = x(2ln x + 1) = 0 ⇒ ln x = −1/2."
+ },
+ {
+  "q": "¿Cuánto vale \\(\\lim_{x\\to0^+} x^2\\ln x\\)?",
+  "o": [
+   "\\(+\\infty\\)",
+   "0",
+   "\\(-\\infty\\)",
+   "1"
+  ],
+  "c": 1,
+  "e": "ln x/(1/x²) y L'Hôpital: −x²/2 → 0."
+ },
+ {
+  "q": "¿Cuál es la derivada de \\(f(x) = \\ln(x^2+3)\\)?",
+  "o": [
+   "\\(\\dfrac{2x}{\\ln(x^2+3)}\\)",
+   "\\(\\dfrac{1}{x^2+3}\\)",
+   "\\(2x\\ln(x^2+3)\\)",
+   "\\(\\dfrac{2x}{x^2+3}\\)"
+  ],
+  "c": 3,
+  "e": "g′/g con g = x² + 3."
+ },
+ {
+  "q": "¿Cuál es el máximo de \\(f(x) = \\ln(4-x^2)\\)?",
+  "o": [
+   "(0, 4)",
+   "No tiene",
+   "\\((\\pm2, 0)\\)",
+   "\\((0, \\ln 4)\\)"
+  ],
+  "c": 3,
+  "e": "f′ = −2x/(4 − x²): + en (−2, 0), − en (0, 2)."
+ },
+ {
+  "q": "¿Cuáles son las asíntotas verticales de \\(f(x) = \\ln(4-x^2)\\)?",
+  "o": [
+   "x = 0",
+   "No tiene",
+   "x = 4",
+   "x = −2 y x = 2"
+  ],
+  "c": 3,
+  "e": "Dominio (−2, 2); en los bordes 4 − x² → 0⁺."
+ },
+ {
+  "q": "¿Cuál es el máximo de \\(f(x) = 2\\ln x - x\\)?",
+  "o": [
+   "(1, −1)",
+   "\\((2, 2\\ln2 - 2)\\)",
+   "No tiene",
+   "(e, 2 − e)"
+  ],
+  "c": 1,
+  "e": "f′ = 2/x − 1 = 0 ⇒ x = 2."
+ }
+];
+
+let orden = [];
+let idx = 0;
+let ok = 0, bad = 0;
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function empezar(){
+  const nombre = document.getElementById('nombre').value.trim();
+  if(!nombre){ alert('Escribe tu nombre para empezar.'); return; }
+  document.getElementById('gate').style.display='none';
+  document.getElementById('quiz').style.display='block';
+  generarSecuencia();
+  mostrarPregunta();
+}
+
+function generarSecuencia(){
+  const todas = shuffle(
+    BANCO_TEORIA.map(x=>({...x,tipo:'teoria'})).concat(
+    BANCO_APLICACION.map(x=>({...x,tipo:'aplicacion'})))
+  );
+  orden = todas;
+  idx = 0; ok = 0; bad = 0;
+}
+
+function mostrarPregunta(){
+  if(idx >= orden.length){ generarSecuencia(); }
+  const item = orden[idx];
+  document.getElementById('contador').textContent = `Pregunta ${idx+1}`;
+  document.getElementById('okcount').textContent = ok;
+  document.getElementById('badcount').textContent = bad;
+  const tag = document.getElementById('qtag');
+  tag.textContent = item.tipo === 'teoria' ? 'Teoría' : 'Aplicación';
+  tag.className = 'qtag ' + item.tipo;
+  document.getElementById('qtext').innerHTML = item.q;
+
+  const opciones = shuffle(item.o.map((texto,i)=>({texto, esCorrecta:i===item.c})));
+  const cont = document.getElementById('opciones');
+  cont.innerHTML='';
+  opciones.forEach(op=>{
+    const btn = document.createElement('button');
+    btn.className='opt';
+    btn.innerHTML = op.texto;
+    btn.onclick = ()=>responder(btn, op.esCorrecta, opciones, cont);
+    cont.appendChild(btn);
+  });
+
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('btnSiguiente').disabled = true;
+  if(window.MathJax){ MathJax.typesetClear([cont, document.getElementById('qtext')]); MathJax.typesetPromise([cont, document.getElementById('qtext')]); }
+}
+
+function responder(btnPulsado, esCorrecta, opciones, cont){
+  const botones = cont.querySelectorAll('.opt');
+  botones.forEach(b=>b.disabled=true);
+  botones.forEach((b,i)=>{
+    if(opciones[i].esCorrecta) b.classList.add('correcta');
+  });
+  if(!esCorrecta) btnPulsado.classList.add('incorrecta');
+
+  const fb = document.getElementById('feedback');
+  const exp = orden[idx] && orden[idx].e ? '<div style="margin-top:8px;font-weight:400">💡 ' + orden[idx].e + '</div>' : '';
+  if(esCorrecta){
+    ok++;
+    fb.innerHTML = '<b>✓ Correcto.</b>' + exp;
+    fb.className = 'feedback show ok';
+  } else {
+    bad++;
+    fb.innerHTML = '<b>✗ No es correcto. La respuesta correcta está marcada en verde.</b>' + exp;
+    fb.className = 'feedback show bad';
+  }
+  if(window.MathJax && MathJax.typesetPromise){ MathJax.typesetPromise([fb]).catch(()=>{}); }
+  document.getElementById('okcount').textContent = ok;
+  document.getElementById('badcount').textContent = bad;
+  document.getElementById('btnSiguiente').disabled = false;
+}
+
+function siguiente(){
+  idx++;
+  mostrarPregunta();
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloque 3 · Práctica — Representación gráfica · Las Chapas ECOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+<style>
+  :root{
+    --navy:#1a2e4a; --navy-light:#2a4468; --teal:#1d7a6b; --teal-light:#e4f2ef;
+    --orange:#e07b3a; --orange-light:#fdeee0; --cream:#f5f2eb; --ink:#2b2b2b;
+    --muted:#6b6f76; --white:#ffffff; --line:#e4e0d6;
+    --red:#c65b4a; --red-light:#fbeae7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Nunito Sans',sans-serif;background:var(--cream);color:var(--ink);line-height:1.6}
+  h1,h2,h3,.brand{font-family:'Nunito',sans-serif}
+  a{color:inherit;text-decoration:none}
+
+  header.top{background:var(--navy);color:#fff;padding:14px 24px;display:flex;align-items:center;gap:8px;font-size:.88rem;font-weight:600;flex-wrap:wrap}
+  header.top a{color:#cfd8e6}
+  header.top a:hover{color:#fff}
+  header.top .sep{color:#5c6b82}
+  header.top .current{color:#fff;font-weight:800}
+
+  .wrap{max-width:720px;margin:0 auto;padding:30px 24px 60px}
+
+  .titlebar{text-align:center;margin-bottom:22px}
+  .titlebar .kicker{display:inline-block;background:var(--teal-light);color:var(--teal);font-weight:800;font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;padding:6px 14px;border-radius:100px;margin-bottom:12px}
+  .titlebar h1{font-size:1.6rem;color:var(--navy);margin:0 0 6px;font-weight:900}
+  .titlebar p{color:var(--muted);margin:0;font-size:.95rem}
+
+  #gate{background:#fff;border:1px solid var(--line);border-radius:16px;padding:28px;text-align:center}
+  #gate input{width:100%;max-width:340px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;font-size:1rem;font-family:inherit;margin:14px 0}
+  .btn{display:inline-block;padding:13px 26px;border-radius:10px;font-weight:800;font-size:.95rem;border:none;cursor:pointer;font-family:inherit}
+  .btn.on{background:var(--teal);color:#fff}
+  .btn.on:hover{background:#166357}
+  .btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+  .btn.ghost:hover{background:#f0ede4}
+  .btn:disabled{opacity:.5;cursor:default}
+
+  #quiz{display:none}
+  .scoreboard{display:flex;justify-content:space-between;align-items:center;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 20px;margin-bottom:18px;font-weight:700;color:var(--navy);font-size:.9rem}
+  .scoreboard .ok{color:var(--teal)}
+  .scoreboard .bad{color:var(--red)}
+
+  .qcard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px}
+  .qtag{display:inline-block;font-weight:800;font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;padding:4px 10px;border-radius:100px;margin-bottom:14px}
+  .qtag.teoria{background:var(--teal-light);color:var(--teal)}
+  .qtag.aplicacion{background:var(--orange-light);color:var(--orange)}
+  .qtext{font-size:1.15rem;color:var(--navy);font-weight:700;margin-bottom:20px}
+
+  .opt{display:block;width:100%;text-align:left;background:#fbfbf9;border:1.5px solid var(--line);border-radius:10px;padding:13px 16px;margin-bottom:10px;font-family:inherit;font-size:1rem;cursor:pointer;color:var(--ink)}
+  .opt:hover{border-color:var(--teal)}
+  .opt.correcta{background:var(--teal-light);border-color:var(--teal);color:var(--navy);font-weight:700}
+  .opt.incorrecta{background:var(--red-light);border-color:var(--red);color:#8a3a2e;font-weight:700}
+  .opt:disabled{cursor:default}
+
+  .feedback{margin-top:16px;padding:14px 16px;border-radius:10px;font-size:.92rem;display:none}
+  .feedback.show{display:block}
+  .feedback.ok{background:var(--teal-light);color:#12574c}
+  .feedback.bad{background:var(--red-light);color:#8a3a2e}
+
+  .controls{display:flex;justify-content:flex-end;margin-top:20px}
+
+  .nav-bottom{display:flex;justify-content:space-between;margin-top:28px}
+  @media (max-width:600px){ .wrap{padding:0 16px} }
+  mjx-container{max-width:100%;overflow-x:auto;overflow-y:hidden}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a href="index.html">Portal de Representación gráfica</a>
+  <span class="sep">·</span>
+  <a href="repr_b3_intro.html">Bloque 3</a>
+  <span class="sep">·</span>
+  <span class="current">Práctica libre</span>
+</header>
+
+<div class="wrap">
+  <div class="titlebar">
+    <span class="kicker">Bloque 3 · Práctica libre</span>
+    <h1>Funciones racionales</h1>
+    <p>Preguntas aleatorias de teoría y de aplicación del bloque, con la explicación de cada respuesta. Cada vez que entras, el orden cambia. Ten a mano lápiz, papel y la calculadora.</p>
+  </div>
+
+  <div id="gate">
+    <p style="margin:0;color:var(--muted)">Escribe tu nombre para empezar (no hay límite de tiempo ni de intentos):</p>
+    <input type="text" id="nombre" placeholder="Nombre y apellidos">
+    <br>
+    <button class="btn on" onclick="empezar()">Empezar a practicar →</button>
+  </div>
+
+  <div id="quiz">
+    <div class="scoreboard">
+      <span id="contador">Pregunta 1</span>
+      <span><span class="ok" id="okcount">0</span> correctas · <span class="bad" id="badcount">0</span> incorrectas</span>
+    </div>
+
+    <div class="qcard">
+      <span class="qtag" id="qtag">Teoría</span>
+      <div class="qtext" id="qtext">—</div>
+      <div id="opciones"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="controls">
+        <button class="btn on" id="btnSiguiente" onclick="siguiente()" disabled>Siguiente pregunta →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-bottom" style="flex-wrap:wrap;gap:12px">
+    <a class="btn ghost" href="index.html">🏠 Portal</a>
+    <a class="btn ghost" href="repr_b3_intro.html">← Volver a la teoría</a>
+    <a class="btn on" href="https://pepivalenzuela.github.io/panel-matematicas/#panel">Formativas en mi panel →</a>
+    <a class="btn ghost" href="repr_b4_intro.html">Bloque 4 →</a>
+  </div>
+</div>
+
+<script>
+// ---------- Banco de preguntas del bloque
+const BANCO_TEORIA = [
+ {
+  "q": "¿Dónde puede tener asíntotas verticales \\(f(x) = \\dfrac{N(x)}{D(x)}\\)?",
+  "o": [
+   "En los ceros del numerador",
+   "En los ceros del denominador que no anulan el numerador",
+   "Donde f′(x) = 0",
+   "En x = 0 siempre"
+  ],
+  "c": 1,
+  "e": "Si D(a) = 0 y N(a) ≠ 0, el cociente tiende a ±∞."
+ },
+ {
+  "q": "Si x = a anula a la vez numerador y denominador de una racional…",
+  "o": [
+   "La función vale 1 en a",
+   "La función vale 0 en a",
+   "Puede ser un hueco (discontinuidad evitable): hay que simplificar",
+   "Siempre es una asíntota vertical"
+  ],
+  "c": 2,
+  "e": "Por ejemplo (x² − 1)/(x − 1) = x + 1 si x ≠ 1: hay un hueco en (1, 2)."
+ },
+ {
+  "q": "Para saber hacia dónde va la gráfica junto a una asíntota vertical x = a se calculan…",
+  "o": [
+   "Los límites en ±∞",
+   "f(a)",
+   "f′(a)",
+   "Los límites laterales en a"
+  ],
+  "c": 3,
+  "e": "Cada límite lateral dice si la rama sube (+∞) o baja (−∞)."
+ },
+ {
+  "q": "Si el grado del numerador es menor que el del denominador, la asíntota horizontal es…",
+  "o": [
+   "y = 0",
+   "No hay",
+   "El cociente de los coeficientes principales",
+   "y = 1"
+  ],
+  "c": 0,
+  "e": "El denominador crece más deprisa y el cociente tiende a 0."
+ },
+ {
+  "q": "Si numerador y denominador tienen el mismo grado, la asíntota horizontal es…",
+  "o": [
+   "No hay",
+   "El cociente de los coeficientes principales",
+   "y = 0",
+   "y = 1 siempre"
+  ],
+  "c": 1,
+  "e": "Por ejemplo (2x − 1)/(x + 3) → 2."
+ },
+ {
+  "q": "Una racional tiene asíntota oblicua cuando…",
+  "o": [
+   "Los grados son iguales",
+   "El denominador no tiene raíces",
+   "El grado del numerador es una unidad mayor que el del denominador",
+   "El grado del numerador es menor"
+  ],
+  "c": 2,
+  "e": "Entonces el cociente de la división es una recta y = mx + n."
+ },
+ {
+  "q": "¿Cómo se obtiene la asíntota oblicua de una racional?",
+  "o": [
+   "Calculando f(0)",
+   "Derivando",
+   "Igualando el denominador a 0",
+   "Dividiendo numerador entre denominador: el cociente es la asíntota"
+  ],
+  "c": 3,
+  "e": "f(x) = mx + n + R(x)/D(x), y R/D → 0."
+ },
+ {
+  "q": "¿Puede la gráfica de una función cortar a su asíntota horizontal?",
+  "o": [
+   "No, nunca",
+   "Solo en x = 0",
+   "Solo si es par",
+   "Sí, puede cortarla en algún punto"
+  ],
+  "c": 3,
+  "e": "Por ejemplo x/(x² + 1) tiene AH y = 0 y pasa por (0, 0)."
+ },
+ {
+  "q": "¿Puede la gráfica de una función cortar a una asíntota vertical x = a?",
+  "o": [
+   "Sí, siempre",
+   "No, porque a no está en el dominio (en una racional)",
+   "Solo si f(a) = 0",
+   "Solo si es impar"
+  ],
+  "c": 1,
+  "e": "En una racional, x = a anula el denominador: la función no existe ahí."
+ },
+ {
+  "q": "Para saber si la gráfica está por encima o por debajo de la asíntota horizontal y = L se estudia…",
+  "o": [
+   "El signo de f(x)",
+   "El signo de f(x) − L",
+   "El signo de f′(x)",
+   "El signo de x − L"
+  ],
+  "c": 1,
+  "e": "Si f(x) − L &gt; 0, la gráfica va por encima."
+ },
+ {
+  "q": "La derivada de \\(\\dfrac{u}{v}\\) es…",
+  "o": [
+   "\\(\\dfrac{u\\'v + uv\\'}{v^2}\\)",
+   "\\(\\dfrac{uv\\' - u\\'v}{v^2}\\)",
+   "\\(\\dfrac{u\\'}{v\\'}\\)",
+   "\\(\\dfrac{u\\'v - uv\\'}{v^2}\\)"
+  ],
+  "c": 3,
+  "e": "Regla del cociente."
+ },
+ {
+  "q": "Al dar los intervalos de crecimiento de una racional hay que…",
+  "o": [
+   "Usar solo los ceros de f′",
+   "Ignorar el dominio",
+   "Partir también por los puntos que no están en el dominio (asíntotas verticales)",
+   "Unir los intervalos separados por la asíntota"
+  ],
+  "c": 2,
+  "e": "Ejemplo: decrece en (0.27, 2) ∪ (2, 3.73), no en (0.27, 3.73)."
+ },
+ {
+  "q": "¿Tiene asíntotas verticales \\(f(x) = \\dfrac{x}{x^2+1}\\)?",
+  "o": [
+   "No, porque x² + 1 no se anula nunca",
+   "Sí, x = −1 y x = 1",
+   "Sí, x = 1",
+   "Sí, x = 0"
+  ],
+  "c": 0,
+  "e": "Su dominio es ℝ."
+ },
+ {
+  "q": "Si una racional tiene asíntota oblicua, ¿tiene también asíntota horizontal?",
+  "o": [
+   "No",
+   "Depende de si es par",
+   "Sí, y = 0",
+   "Sí, y = 1"
+  ],
+  "c": 0,
+  "e": "Por cada lado hay horizontal u oblicua, no las dos."
+ },
+ {
+  "q": "Los extremos relativos de una racional se buscan…",
+  "o": [
+   "En los ceros del denominador",
+   "En x = 0",
+   "En las asíntotas",
+   "Donde f′(x) = 0 dentro del dominio"
+  ],
+  "c": 3,
+  "e": "En las asíntotas verticales la función no existe."
+ },
+ {
+  "q": "En el coste medio \\(\\bar C(x) = x + \\dfrac{100}{x}\\), la asíntota vertical x = 0 indica que…",
+  "o": [
+   "Con muy pocas unidades el coste por unidad es enorme",
+   "Producir 0 unidades no cuesta nada",
+   "El coste medio es siempre 0",
+   "El coste nunca baja"
+  ],
+  "c": 0,
+  "e": "El coste fijo se reparte entre muy pocas unidades."
+ }
+];
+
+const BANCO_APLICACION = [
+ {
+  "q": "¿Cuáles son las asíntotas verticales de \\(f(x) = \\dfrac{x+2}{x^2-9}\\)?",
+  "o": [
+   "x = 9",
+   "x = −2",
+   "x = 3 y x = −3",
+   "y = 0"
+  ],
+  "c": 2,
+  "e": "x² − 9 = 0 ⇒ x = ±3 (el numerador no se anula ahí)."
+ },
+ {
+  "q": "¿Cuál es la asíntota horizontal de \\(f(x) = \\dfrac{2x-1}{x+3}\\)?",
+  "o": [
+   "y = −1/3",
+   "x = −3",
+   "y = 2",
+   "y = 0"
+  ],
+  "c": 2,
+  "e": "Mismo grado: 2/1."
+ },
+ {
+  "q": "¿Cuál es la asíntota horizontal de \\(f(x) = \\dfrac{x+1}{x^2+1}\\)?",
+  "o": [
+   "No tiene",
+   "y = 1",
+   "y = 0",
+   "y = −1"
+  ],
+  "c": 2,
+  "e": "Grado del numerador menor."
+ },
+ {
+  "q": "¿Cuál es la asíntota oblicua de \\(f(x) = \\dfrac{x^2+3x}{x-1}\\)?",
+  "o": [
+   "y = x",
+   "y = x − 1",
+   "y = x + 4",
+   "y = x + 3"
+  ],
+  "c": 2,
+  "e": "x² + 3x = (x − 1)(x + 4) + 4."
+ },
+ {
+  "q": "¿Qué le ocurre a \\(f(x) = \\dfrac{x^2-4}{x-2}\\) en x = 2?",
+  "o": [
+   "Vale 2",
+   "Vale 0",
+   "Tiene un hueco en (2, 4), no una asíntota",
+   "Tiene una asíntota vertical x = 2"
+  ],
+  "c": 2,
+  "e": "f(x) = x + 2 si x ≠ 2; el límite en 2 es 4."
+ },
+ {
+  "q": "¿Cuánto vale \\(\\lim_{x\\to2^+}\\dfrac{1}{x-2}\\)?",
+  "o": [
+   "1/2",
+   "\\(-\\infty\\)",
+   "0",
+   "\\(+\\infty\\)"
+  ],
+  "c": 3,
+  "e": "Denominador pequeño y positivo."
+ },
+ {
+  "q": "¿Cuánto vale \\(\\lim_{x\\to2^-}\\dfrac{x+1}{x-2}\\)?",
+  "o": [
+   "0",
+   "3",
+   "\\(+\\infty\\)",
+   "\\(-\\infty\\)"
+  ],
+  "c": 3,
+  "e": "3 entre un número pequeño y negativo."
+ },
+ {
+  "q": "¿En qué punto corta al eje OY \\(f(x) = \\dfrac{x-4}{x+2}\\)?",
+  "o": [
+   "(0, −2)",
+   "(4, 0)",
+   "(0, 2)",
+   "(−2, 0)"
+  ],
+  "c": 0,
+  "e": "f(0) = −4/2."
+ },
+ {
+  "q": "Para x &gt; 0, ¿dónde tiene un mínimo \\(f(x) = x + \\dfrac{100}{x}\\)?",
+  "o": [
+   "(1, 101)",
+   "(10, 10)",
+   "(100, 101)",
+   "(10, 20)"
+  ],
+  "c": 3,
+  "e": "f′ = 1 − 100/x² = 0 ⇒ x = 10; f(10) = 20."
+ },
+ {
+  "q": "¿Dónde tiene un máximo \\(f(x) = \\dfrac{x}{x^2+1}\\)?",
+  "o": [
+   "(1, 1)",
+   "(−1, −1/2)",
+   "(1, 1/2)",
+   "(0, 0)"
+  ],
+  "c": 2,
+  "e": "f′ = (1 − x²)/(x² + 1)²: + en (−1, 1), − fuera; máximo en 1."
+ },
+ {
+  "q": "¿Cómo es la monotonía de \\(f(x) = \\dfrac{x+1}{x-1}\\)?",
+  "o": [
+   "Tiene un máximo en x = 0",
+   "Decreciente en todo su dominio",
+   "Crece en (−∞, 1) y decrece en (1, +∞)",
+   "Creciente en todo su dominio"
+  ],
+  "c": 1,
+  "e": "f′(x) = −2/(x − 1)² &lt; 0 para x ≠ 1."
+ },
+ {
+  "q": "¿En qué abscisa tiene un máximo relativo \\(f(x) = \\dfrac{x^2-1}{x-2}\\)?",
+  "o": [
+   "x = 2",
+   "\\(x = 2+\\sqrt3\\)",
+   "\\(x = 2-\\sqrt3\\)",
+   "x = 1"
+  ],
+  "c": 2,
+  "e": "f′ = (x² − 4x + 1)/(x − 2)² = 0 ⇒ x = 2 ± √3; en 2 − √3 pasa de + a −."
+ },
+ {
+  "q": "¿Cuál es el mínimo relativo de \\(f(x) = \\dfrac{x^2}{x-1}\\)?",
+  "o": [
+   "(0, 0)",
+   "(2, 4)",
+   "(1, 1)",
+   "(−2, −4/3)"
+  ],
+  "c": 1,
+  "e": "f′ = x(x − 2)/(x − 1)²: máximo en 0 y mínimo en 2, con f(2) = 4."
+ },
+ {
+  "q": "¿Cuál es la asíntota oblicua de \\(f(x) = \\dfrac{x^2}{x-1}\\)?",
+  "o": [
+   "y = 1",
+   "y = x − 1",
+   "y = x",
+   "y = x + 1"
+  ],
+  "c": 3,
+  "e": "x² = (x − 1)(x + 1) + 1."
+ },
+ {
+  "q": "La concentración de un medicamento es \\(C(t) = \\dfrac{4t}{t^2+1}\\). ¿Cuál es la concentración máxima?",
+  "o": [
+   "1 mg/L",
+   "2 mg/L",
+   "0.5 mg/L",
+   "4 mg/L"
+  ],
+  "c": 1,
+  "e": "C′ = (4 − 4t²)/(t² + 1)² = 0 ⇒ t = 1; C(1) = 4/2 = 2."
+ },
+ {
+  "q": "¿Cuál es el mínimo de \\(f(x) = \\dfrac{x^2}{x^2+1}\\)?",
+  "o": [
+   "(1, 1/2)",
+   "(0, 0)",
+   "(0, 1)",
+   "No tiene"
+  ],
+  "c": 1,
+  "e": "f′ = 2x/(x² + 1)²: − para x &lt; 0, + para x &gt; 0."
+ }
+];
+
+let orden = [];
+let idx = 0;
+let ok = 0, bad = 0;
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function empezar(){
+  const nombre = document.getElementById('nombre').value.trim();
+  if(!nombre){ alert('Escribe tu nombre para empezar.'); return; }
+  document.getElementById('gate').style.display='none';
+  document.getElementById('quiz').style.display='block';
+  generarSecuencia();
+  mostrarPregunta();
+}
+
+function generarSecuencia(){
+  const todas = shuffle(
+    BANCO_TEORIA.map(x=>({...x,tipo:'teoria'})).concat(
+    BANCO_APLICACION.map(x=>({...x,tipo:'aplicacion'})))
+  );
+  orden = todas;
+  idx = 0; ok = 0; bad = 0;
+}
+
+function mostrarPregunta(){
+  if(idx >= orden.length){ generarSecuencia(); }
+  const item = orden[idx];
+  document.getElementById('contador').textContent = `Pregunta ${idx+1}`;
+  document.getElementById('okcount').textContent = ok;
+  document.getElementById('badcount').textContent = bad;
+  const tag = document.getElementById('qtag');
+  tag.textContent = item.tipo === 'teoria' ? 'Teoría' : 'Aplicación';
+  tag.className = 'qtag ' + item.tipo;
+  document.getElementById('qtext').innerHTML = item.q;
+
+  const opciones = shuffle(item.o.map((texto,i)=>({texto, esCorrecta:i===item.c})));
+  const cont = document.getElementById('opciones');
+  cont.innerHTML='';
+  opciones.forEach(op=>{
+    const btn = document.createElement('button');
+    btn.className='opt';
+    btn.innerHTML = op.texto;
+    btn.onclick = ()=>responder(btn, op.esCorrecta, opciones, cont);
+    cont.appendChild(btn);
+  });
+
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('btnSiguiente').disabled = true;
+  if(window.MathJax){ MathJax.typesetClear([cont, document.getElementById('qtext')]); MathJax.typesetPromise([cont, document.getElementById('qtext')]); }
+}
+
+function responder(btnPulsado, esCorrecta, opciones, cont){
+  const botones = cont.querySelectorAll('.opt');
+  botones.forEach(b=>b.disabled=true);
+  botones.forEach((b,i)=>{
+    if(opciones[i].esCorrecta) b.classList.add('correcta');
+  });
+  if(!esCorrecta) btnPulsado.classList.add('incorrecta');
+
+  const fb = document.getElementById('feedback');
+  const exp = orden[idx] && orden[idx].e ? '<div style="margin-top:8px;font-weight:400">💡 ' + orden[idx].e + '</div>' : '';
+  if(esCorrecta){
+    ok++;
+    fb.innerHTML = '<b>✓ Correcto.</b>' + exp;
+    fb.className = 'feedback show ok';
+  } else {
+    bad++;
+    fb.innerHTML = '<b>✗ No es correcto. La respuesta correcta está marcada en verde.</b>' + exp;
+    fb.className = 'feedback show bad';
+  }
+  if(window.MathJax && MathJax.typesetPromise){ MathJax.typesetPromise([fb]).catch(()=>{}); }
+  document.getElementById('okcount').textContent = ok;
+  document.getElementById('badcount').textContent = bad;
+  document.getElementById('btnSiguiente').disabled = false;
+}
+
+function siguiente(){
+  idx++;
+  mostrarPregunta();
+}
+</script>
+
+</body>
+</html>

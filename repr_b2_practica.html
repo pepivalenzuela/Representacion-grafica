@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloque 2 · Práctica — Representación gráfica · Las Chapas ECOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+<style>
+  :root{
+    --navy:#1a2e4a; --navy-light:#2a4468; --teal:#1d7a6b; --teal-light:#e4f2ef;
+    --orange:#e07b3a; --orange-light:#fdeee0; --cream:#f5f2eb; --ink:#2b2b2b;
+    --muted:#6b6f76; --white:#ffffff; --line:#e4e0d6;
+    --red:#c65b4a; --red-light:#fbeae7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Nunito Sans',sans-serif;background:var(--cream);color:var(--ink);line-height:1.6}
+  h1,h2,h3,.brand{font-family:'Nunito',sans-serif}
+  a{color:inherit;text-decoration:none}
+
+  header.top{background:var(--navy);color:#fff;padding:14px 24px;display:flex;align-items:center;gap:8px;font-size:.88rem;font-weight:600;flex-wrap:wrap}
+  header.top a{color:#cfd8e6}
+  header.top a:hover{color:#fff}
+  header.top .sep{color:#5c6b82}
+  header.top .current{color:#fff;font-weight:800}
+
+  .wrap{max-width:720px;margin:0 auto;padding:30px 24px 60px}
+
+  .titlebar{text-align:center;margin-bottom:22px}
+  .titlebar .kicker{display:inline-block;background:var(--teal-light);color:var(--teal);font-weight:800;font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;padding:6px 14px;border-radius:100px;margin-bottom:12px}
+  .titlebar h1{font-size:1.6rem;color:var(--navy);margin:0 0 6px;font-weight:900}
+  .titlebar p{color:var(--muted);margin:0;font-size:.95rem}
+
+  #gate{background:#fff;border:1px solid var(--line);border-radius:16px;padding:28px;text-align:center}
+  #gate input{width:100%;max-width:340px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;font-size:1rem;font-family:inherit;margin:14px 0}
+  .btn{display:inline-block;padding:13px 26px;border-radius:10px;font-weight:800;font-size:.95rem;border:none;cursor:pointer;font-family:inherit}
+  .btn.on{background:var(--teal);color:#fff}
+  .btn.on:hover{background:#166357}
+  .btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+  .btn.ghost:hover{background:#f0ede4}
+  .btn:disabled{opacity:.5;cursor:default}
+
+  #quiz{display:none}
+  .scoreboard{display:flex;justify-content:space-between;align-items:center;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 20px;margin-bottom:18px;font-weight:700;color:var(--navy);font-size:.9rem}
+  .scoreboard .ok{color:var(--teal)}
+  .scoreboard .bad{color:var(--red)}
+
+  .qcard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px}
+  .qtag{display:inline-block;font-weight:800;font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;padding:4px 10px;border-radius:100px;margin-bottom:14px}
+  .qtag.teoria{background:var(--teal-light);color:var(--teal)}
+  .qtag.aplicacion{background:var(--orange-light);color:var(--orange)}
+  .qtext{font-size:1.15rem;color:var(--navy);font-weight:700;margin-bottom:20px}
+
+  .opt{display:block;width:100%;text-align:left;background:#fbfbf9;border:1.5px solid var(--line);border-radius:10px;padding:13px 16px;margin-bottom:10px;font-family:inherit;font-size:1rem;cursor:pointer;color:var(--ink)}
+  .opt:hover{border-color:var(--teal)}
+  .opt.correcta{background:var(--teal-light);border-color:var(--teal);color:var(--navy);font-weight:700}
+  .opt.incorrecta{background:var(--red-light);border-color:var(--red);color:#8a3a2e;font-weight:700}
+  .opt:disabled{cursor:default}
+
+  .feedback{margin-top:16px;padding:14px 16px;border-radius:10px;font-size:.92rem;display:none}
+  .feedback.show{display:block}
+  .feedback.ok{background:var(--teal-light);color:#12574c}
+  .feedback.bad{background:var(--red-light);color:#8a3a2e}
+
+  .controls{display:flex;justify-content:flex-end;margin-top:20px}
+
+  .nav-bottom{display:flex;justify-content:space-between;margin-top:28px}
+  @media (max-width:600px){ .wrap{padding:0 16px} }
+  mjx-container{max-width:100%;overflow-x:auto;overflow-y:hidden}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a href="index.html">Portal de Representación gráfica</a>
+  <span class="sep">·</span>
+  <a href="repr_b2_intro.html">Bloque 2</a>
+  <span class="sep">·</span>
+  <span class="current">Práctica libre</span>
+</header>
+
+<div class="wrap">
+  <div class="titlebar">
+    <span class="kicker">Bloque 2 · Práctica libre</span>
+    <h1>Funciones polinómicas</h1>
+    <p>Preguntas aleatorias de teoría y de aplicación del bloque, con la explicación de cada respuesta. Cada vez que entras, el orden cambia. Ten a mano lápiz, papel y la calculadora.</p>
+  </div>
+
+  <div id="gate">
+    <p style="margin:0;color:var(--muted)">Escribe tu nombre para empezar (no hay límite de tiempo ni de intentos):</p>
+    <input type="text" id="nombre" placeholder="Nombre y apellidos">
+    <br>
+    <button class="btn on" onclick="empezar()">Empezar a practicar →</button>
+  </div>
+
+  <div id="quiz">
+    <div class="scoreboard">
+      <span id="contador">Pregunta 1</span>
+      <span><span class="ok" id="okcount">0</span> correctas · <span class="bad" id="badcount">0</span> incorrectas</span>
+    </div>
+
+    <div class="qcard">
+      <span class="qtag" id="qtag">Teoría</span>
+      <div class="qtext" id="qtext">—</div>
+      <div id="opciones"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="controls">
+        <button class="btn on" id="btnSiguiente" onclick="siguiente()" disabled>Siguiente pregunta →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-bottom" style="flex-wrap:wrap;gap:12px">
+    <a class="btn ghost" href="index.html">🏠 Portal</a>
+    <a class="btn ghost" href="repr_b2_intro.html">← Volver a la teoría</a>
+    <a class="btn on" href="https://pepivalenzuela.github.io/panel-matematicas/#panel">Formativas en mi panel →</a>
+    <a class="btn ghost" href="repr_b3_intro.html">Bloque 3 →</a>
+  </div>
+</div>
+
+<script>
+// ---------- Banco de preguntas del bloque
+const BANCO_TEORIA = [
+ {
+  "q": "¿En qué abscisa está el vértice de la parábola \\(y = ax^2 + bx + c\\)?",
+  "o": [
+   "\\(x = -\\dfrac{b}{2a}\\)",
+   "\\(x = -\\dfrac{2a}{b}\\)",
+   "\\(x = -\\dfrac{c}{a}\\)",
+   "\\(x = \\dfrac{b}{2a}\\)"
+  ],
+  "c": 0,
+  "e": "Es donde f′(x) = 2ax + b = 0."
+ },
+ {
+  "q": "Si a &gt; 0, la parábola y = ax² + bx + c…",
+  "o": [
+   "Es ∩ y tiene un máximo en el vértice",
+   "Es siempre creciente",
+   "Es ∪ y tiene un mínimo en el vértice",
+   "No tiene vértice"
+  ],
+  "c": 2,
+  "e": "f″ = 2a &gt; 0: cóncava hacia arriba."
+ },
+ {
+  "q": "¿Cuántos extremos relativos puede tener como máximo un polinomio de grado 3?",
+  "o": [
+   "3",
+   "Ninguno",
+   "2",
+   "1"
+  ],
+  "c": 2,
+  "e": "f′ es de grado 2 y tiene como mucho 2 raíces."
+ },
+ {
+  "q": "Un polinomio de grado n tiene como mucho…",
+  "o": [
+   "n extremos relativos",
+   "n − 1 extremos relativos",
+   "2n extremos relativos",
+   "n + 1 extremos relativos"
+  ],
+  "c": 1,
+  "e": "Los extremos están entre las raíces de f′, que es de grado n − 1."
+ },
+ {
+  "q": "Un polinomio de grado n tiene como mucho…",
+  "o": [
+   "n − 2 puntos de inflexión",
+   "n − 1 puntos de inflexión",
+   "n puntos de inflexión",
+   "1 punto de inflexión"
+  ],
+  "c": 0,
+  "e": "Las inflexiones están entre las raíces de f″, de grado n − 2."
+ },
+ {
+  "q": "¿Cuánto vale \\(\\lim_{x\\to+\\infty}(-2x^3 + 5x^2 + 1)\\)?",
+  "o": [
+   "0",
+   "\\(-\\infty\\)",
+   "\\(+\\infty\\)",
+   "−2"
+  ],
+  "c": 1,
+  "e": "Manda el término de mayor grado: −2x³ → −∞."
+ },
+ {
+  "q": "Si un polinomio es de grado par con coeficiente principal positivo, cuando x → ±∞…",
+  "o": [
+   "f(x) → +∞ a la derecha y −∞ a la izquierda",
+   "f(x) → −∞ por los dos lados",
+   "f(x) → +∞ por los dos lados",
+   "f(x) → 0"
+  ],
+  "c": 2,
+  "e": "Como x⁴: las dos ramas suben."
+ },
+ {
+  "q": "¿Tiene siempre un polinomio de grado 3 algún punto de inflexión?",
+  "o": [
+   "Sí, exactamente uno",
+   "Solo si tiene extremos",
+   "Sí, dos",
+   "No, nunca"
+  ],
+  "c": 0,
+  "e": "f″ es de grado 1: se anula una vez y cambia de signo."
+ },
+ {
+  "q": "¿Corta siempre al eje OX un polinomio de grado 3?",
+  "o": [
+   "Solo si es impar",
+   "Sí, exactamente tres veces",
+   "Sí, al menos una vez",
+   "No, puede no cortarlo"
+  ],
+  "c": 2,
+  "e": "Va de −∞ a +∞ (o al revés) y es continua: por Bolzano corta al eje."
+ },
+ {
+  "q": "Un polinomio de grado n corta al eje OX…",
+  "o": [
+   "como mucho n veces",
+   "siempre una vez",
+   "siempre n veces",
+   "como mucho n − 1 veces"
+  ],
+  "c": 0,
+  "e": "Tiene como mucho n raíces reales."
+ },
+ {
+  "q": "Para hallar los cortes con el eje OX de un polinomio de grado 3 o más, normalmente…",
+  "o": [
+   "Se calcula f(0)",
+   "Se buscan las asíntotas",
+   "Se factoriza (sacando factor común o con Ruffini)",
+   "Se deriva"
+  ],
+  "c": 2,
+  "e": "f(x) = 0 se resuelve factorizando."
+ },
+ {
+  "q": "Si f′(a) = 0 pero f′ no cambia de signo en a (por ejemplo, una raíz doble de f′), en a…",
+  "o": [
+   "Hay un máximo",
+   "Hay una asíntota",
+   "Hay un mínimo",
+   "No hay extremo relativo"
+  ],
+  "c": 3,
+  "e": "Ejemplo: f(x) = x³ en x = 0 tiene tangente horizontal, pero sigue creciendo."
+ },
+ {
+  "q": "Si un polinomio solo tiene potencias pares de x (y término independiente), la función es…",
+  "o": [
+   "Par",
+   "Constante",
+   "Impar",
+   "Ni par ni impar"
+  ],
+  "c": 0,
+  "e": "f(−x) = f(x) porque (−x)ⁿ = xⁿ si n es par."
+ },
+ {
+  "q": "Para hallar los coeficientes de un polinomio, el dato «tiene un extremo en x = 2» se traduce en…",
+  "o": [
+   "f(0) = 2",
+   "f′(2) = 0",
+   "f(2) = 0",
+   "f″(2) = 0"
+  ],
+  "c": 1,
+  "e": "En un extremo de una función derivable la derivada se anula."
+ },
+ {
+  "q": "El dato «tiene un punto de inflexión en x = 1» se traduce en…",
+  "o": [
+   "f″(1) = 0",
+   "f′(1) = 0",
+   "f(1) = 0",
+   "f′(1) = 1"
+  ],
+  "c": 0,
+  "e": "En la inflexión la segunda derivada se anula."
+ },
+ {
+  "q": "¿Qué hace la función f(x) = x³ en todo ℝ?",
+  "o": [
+   "Tiene un mínimo en 0",
+   "Crece siempre",
+   "Decrece siempre",
+   "Tiene un máximo en 0"
+  ],
+  "c": 1,
+  "e": "f′(x) = 3x² ≥ 0 y solo se anula en 0: siempre creciente."
+ }
+];
+
+const BANCO_APLICACION = [
+ {
+  "q": "¿Cuál es el vértice de \\(f(x) = x^2 - 6x + 5\\)?",
+  "o": [
+   "(−3, 32)",
+   "(6, 5)",
+   "(3, −4)",
+   "(3, 4)"
+  ],
+  "c": 2,
+  "e": "x = 6/2 = 3; f(3) = 9 − 18 + 5 = −4."
+ },
+ {
+  "q": "¿Cuál es el valor máximo de \\(f(x) = -x^2 + 4x\\)?",
+  "o": [
+   "0",
+   "−4",
+   "4",
+   "2"
+  ],
+  "c": 2,
+  "e": "f′ = −2x + 4 = 0 ⇒ x = 2; f(2) = 4."
+ },
+ {
+  "q": "¿Dónde tiene un máximo relativo \\(f(x) = x^3 - 3x + 2\\)?",
+  "o": [
+   "(0, 2)",
+   "(1, 0)",
+   "(−1, 0)",
+   "(−1, 4)"
+  ],
+  "c": 3,
+  "e": "f′ = 3x² − 3 = 0 ⇒ x = ±1; en −1 pasa de + a −; f(−1) = −1 + 3 + 2 = 4."
+ },
+ {
+  "q": "¿Dónde tiene un mínimo relativo \\(f(x) = x^3 - 3x + 2\\)?",
+  "o": [
+   "(0, 2)",
+   "(1, 0)",
+   "(2, 4)",
+   "(−1, 4)"
+  ],
+  "c": 1,
+  "e": "En x = 1 f′ pasa de − a +; f(1) = 0."
+ },
+ {
+  "q": "¿Cuáles son los mínimos relativos de \\(f(x) = x^4 - 2x^2\\)?",
+  "o": [
+   "(0, 0)",
+   "(±√2, 0)",
+   "(−1, −1) y (1, −1)",
+   "(−1, 1) y (1, 1)"
+  ],
+  "c": 2,
+  "e": "f′ = 4x(x² − 1): − + − +; mínimos en ±1, con f(±1) = −1."
+ },
+ {
+  "q": "¿Dónde tiene un punto de inflexión \\(f(x) = x^3 - 3x^2 + 2\\)?",
+  "o": [
+   "(3, 2)",
+   "(0, 2)",
+   "(2, −2)",
+   "(1, 0)"
+  ],
+  "c": 3,
+  "e": "f″ = 6x − 6 = 0 ⇒ x = 1; f(1) = 1 − 3 + 2 = 0."
+ },
+ {
+  "q": "\\(f(x) = x^3 + ax^2 + bx + c\\) tiene inflexión en x = 1, un extremo en x = 3 y f(0) = 2. ¿Cuánto vale b?",
+  "o": [
+   "−9",
+   "−3",
+   "9",
+   "2"
+  ],
+  "c": 0,
+  "e": "f″(1) = 6 + 2a = 0 ⇒ a = −3; f′(3) = 27 + 6a + b = 0 ⇒ b = −9."
+ },
+ {
+  "q": "¿En qué intervalo decrece \\(f(x) = x^3 - 12x\\)?",
+  "o": [
+   "\\((-\\infty,-2)\\cup(2,+\\infty)\\)",
+   "\\((0, 12)\\)",
+   "\\((-12, 12)\\)",
+   "\\((-2, 2)\\)"
+  ],
+  "c": 3,
+  "e": "f′ = 3x² − 12 &lt; 0 ⇒ x² &lt; 4."
+ },
+ {
+  "q": "¿Cuál es el máximo relativo de \\(f(x) = 2x^3 - 3x^2 - 12x\\)?",
+  "o": [
+   "(0, 0)",
+   "(1, −13)",
+   "(−1, 7)",
+   "(2, −20)"
+  ],
+  "c": 2,
+  "e": "f′ = 6x² − 6x − 12 = 6(x − 2)(x + 1); máximo en −1: f(−1) = −2 − 3 + 12 = 7."
+ },
+ {
+  "q": "¿Cuál es el mínimo relativo de \\(f(x) = 2x^3 - 3x^2 - 12x\\)?",
+  "o": [
+   "(−1, 7)",
+   "(1/2, −6.5)",
+   "(3, −9)",
+   "(2, −20)"
+  ],
+  "c": 3,
+  "e": "Mínimo en x = 2: f(2) = 16 − 12 − 24 = −20."
+ },
+ {
+  "q": "¿En qué abscisa tiene un punto de inflexión \\(f(x) = 2x^3 - 3x^2 - 12x\\)?",
+  "o": [
+   "x = 0",
+   "x = 1",
+   "x = −1",
+   "x = 1/2"
+  ],
+  "c": 3,
+  "e": "f″ = 12x − 6 = 0 ⇒ x = 1/2."
+ },
+ {
+  "q": "¿Qué ocurre en x = 0 con \\(f(x) = x^4 - 4x^3\\)?",
+  "o": [
+   "Hay una asíntota",
+   "Hay un máximo",
+   "No hay extremo: f′ no cambia de signo",
+   "Hay un mínimo"
+  ],
+  "c": 2,
+  "e": "f′ = 4x²(x − 3) es negativa a los dos lados de 0."
+ },
+ {
+  "q": "¿Cuál es el mínimo de \\(f(x) = x^4 - 4x^3\\)?",
+  "o": [
+   "(4, 0)",
+   "(0, 0)",
+   "(3, −27)",
+   "(2, −16)"
+  ],
+  "c": 2,
+  "e": "f′ = 4x²(x − 3): pasa de − a + en x = 3; f(3) = 81 − 108 = −27."
+ },
+ {
+  "q": "¿Cuánto vale \\(\\lim_{x\\to-\\infty}(x^4 - 4x^3)\\)?",
+  "o": [
+   "1",
+   "0",
+   "\\(-\\infty\\)",
+   "\\(+\\infty\\)"
+  ],
+  "c": 3,
+  "e": "Grado par con coeficiente positivo: +∞."
+ },
+ {
+  "q": "¿Para qué valor de a tiene \\(f(x) = x^3 + ax\\) un extremo relativo en x = 2?",
+  "o": [
+   "a = 12",
+   "a = −4",
+   "a = 4",
+   "a = −12"
+  ],
+  "c": 3,
+  "e": "f′(2) = 12 + a = 0."
+ },
+ {
+  "q": "\\(f(x) = ax^2 + bx\\) tiene su vértice en (1, 3). ¿Cuánto vale a?",
+  "o": [
+   "−3",
+   "6",
+   "−6",
+   "3"
+  ],
+  "c": 0,
+  "e": "f′(1) = 2a + b = 0 y f(1) = a + b = 3 ⇒ a = −3, b = 6."
+ }
+];
+
+let orden = [];
+let idx = 0;
+let ok = 0, bad = 0;
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function empezar(){
+  const nombre = document.getElementById('nombre').value.trim();
+  if(!nombre){ alert('Escribe tu nombre para empezar.'); return; }
+  document.getElementById('gate').style.display='none';
+  document.getElementById('quiz').style.display='block';
+  generarSecuencia();
+  mostrarPregunta();
+}
+
+function generarSecuencia(){
+  const todas = shuffle(
+    BANCO_TEORIA.map(x=>({...x,tipo:'teoria'})).concat(
+    BANCO_APLICACION.map(x=>({...x,tipo:'aplicacion'})))
+  );
+  orden = todas;
+  idx = 0; ok = 0; bad = 0;
+}
+
+function mostrarPregunta(){
+  if(idx >= orden.length){ generarSecuencia(); }
+  const item = orden[idx];
+  document.getElementById('contador').textContent = `Pregunta ${idx+1}`;
+  document.getElementById('okcount').textContent = ok;
+  document.getElementById('badcount').textContent = bad;
+  const tag = document.getElementById('qtag');
+  tag.textContent = item.tipo === 'teoria' ? 'Teoría' : 'Aplicación';
+  tag.className = 'qtag ' + item.tipo;
+  document.getElementById('qtext').innerHTML = item.q;
+
+  const opciones = shuffle(item.o.map((texto,i)=>({texto, esCorrecta:i===item.c})));
+  const cont = document.getElementById('opciones');
+  cont.innerHTML='';
+  opciones.forEach(op=>{
+    const btn = document.createElement('button');
+    btn.className='opt';
+    btn.innerHTML = op.texto;
+    btn.onclick = ()=>responder(btn, op.esCorrecta, opciones, cont);
+    cont.appendChild(btn);
+  });
+
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('btnSiguiente').disabled = true;
+  if(window.MathJax){ MathJax.typesetClear([cont, document.getElementById('qtext')]); MathJax.typesetPromise([cont, document.getElementById('qtext')]); }
+}
+
+function responder(btnPulsado, esCorrecta, opciones, cont){
+  const botones = cont.querySelectorAll('.opt');
+  botones.forEach(b=>b.disabled=true);
+  botones.forEach((b,i)=>{
+    if(opciones[i].esCorrecta) b.classList.add('correcta');
+  });
+  if(!esCorrecta) btnPulsado.classList.add('incorrecta');
+
+  const fb = document.getElementById('feedback');
+  const exp = orden[idx] && orden[idx].e ? '<div style="margin-top:8px;font-weight:400">💡 ' + orden[idx].e + '</div>' : '';
+  if(esCorrecta){
+    ok++;
+    fb.innerHTML = '<b>✓ Correcto.</b>' + exp;
+    fb.className = 'feedback show ok';
+  } else {
+    bad++;
+    fb.innerHTML = '<b>✗ No es correcto. La respuesta correcta está marcada en verde.</b>' + exp;
+    fb.className = 'feedback show bad';
+  }
+  if(window.MathJax && MathJax.typesetPromise){ MathJax.typesetPromise([fb]).catch(()=>{}); }
+  document.getElementById('okcount').textContent = ok;
+  document.getElementById('badcount').textContent = bad;
+  document.getElementById('btnSiguiente').disabled = false;
+}
+
+function siguiente(){
+  idx++;
+  mostrarPregunta();
+}
+</script>
+
+</body>
+</html>

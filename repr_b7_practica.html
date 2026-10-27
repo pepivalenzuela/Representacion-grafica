@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloque 7 · Práctica — Representación gráfica · Las Chapas ECOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+<style>
+  :root{
+    --navy:#1a2e4a; --navy-light:#2a4468; --teal:#1d7a6b; --teal-light:#e4f2ef;
+    --orange:#e07b3a; --orange-light:#fdeee0; --cream:#f5f2eb; --ink:#2b2b2b;
+    --muted:#6b6f76; --white:#ffffff; --line:#e4e0d6;
+    --red:#c65b4a; --red-light:#fbeae7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Nunito Sans',sans-serif;background:var(--cream);color:var(--ink);line-height:1.6}
+  h1,h2,h3,.brand{font-family:'Nunito',sans-serif}
+  a{color:inherit;text-decoration:none}
+
+  header.top{background:var(--navy);color:#fff;padding:14px 24px;display:flex;align-items:center;gap:8px;font-size:.88rem;font-weight:600;flex-wrap:wrap}
+  header.top a{color:#cfd8e6}
+  header.top a:hover{color:#fff}
+  header.top .sep{color:#5c6b82}
+  header.top .current{color:#fff;font-weight:800}
+
+  .wrap{max-width:720px;margin:0 auto;padding:30px 24px 60px}
+
+  .titlebar{text-align:center;margin-bottom:22px}
+  .titlebar .kicker{display:inline-block;background:var(--teal-light);color:var(--teal);font-weight:800;font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;padding:6px 14px;border-radius:100px;margin-bottom:12px}
+  .titlebar h1{font-size:1.6rem;color:var(--navy);margin:0 0 6px;font-weight:900}
+  .titlebar p{color:var(--muted);margin:0;font-size:.95rem}
+
+  #gate{background:#fff;border:1px solid var(--line);border-radius:16px;padding:28px;text-align:center}
+  #gate input{width:100%;max-width:340px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;font-size:1rem;font-family:inherit;margin:14px 0}
+  .btn{display:inline-block;padding:13px 26px;border-radius:10px;font-weight:800;font-size:.95rem;border:none;cursor:pointer;font-family:inherit}
+  .btn.on{background:var(--teal);color:#fff}
+  .btn.on:hover{background:#166357}
+  .btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+  .btn.ghost:hover{background:#f0ede4}
+  .btn:disabled{opacity:.5;cursor:default}
+
+  #quiz{display:none}
+  .scoreboard{display:flex;justify-content:space-between;align-items:center;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 20px;margin-bottom:18px;font-weight:700;color:var(--navy);font-size:.9rem}
+  .scoreboard .ok{color:var(--teal)}
+  .scoreboard .bad{color:var(--red)}
+
+  .qcard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px}
+  .qtag{display:inline-block;font-weight:800;font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;padding:4px 10px;border-radius:100px;margin-bottom:14px}
+  .qtag.teoria{background:var(--teal-light);color:var(--teal)}
+  .qtag.aplicacion{background:var(--orange-light);color:var(--orange)}
+  .qtext{font-size:1.15rem;color:var(--navy);font-weight:700;margin-bottom:20px}
+
+  .opt{display:block;width:100%;text-align:left;background:#fbfbf9;border:1.5px solid var(--line);border-radius:10px;padding:13px 16px;margin-bottom:10px;font-family:inherit;font-size:1rem;cursor:pointer;color:var(--ink)}
+  .opt:hover{border-color:var(--teal)}
+  .opt.correcta{background:var(--teal-light);border-color:var(--teal);color:var(--navy);font-weight:700}
+  .opt.incorrecta{background:var(--red-light);border-color:var(--red);color:#8a3a2e;font-weight:700}
+  .opt:disabled{cursor:default}
+
+  .feedback{margin-top:16px;padding:14px 16px;border-radius:10px;font-size:.92rem;display:none}
+  .feedback.show{display:block}
+  .feedback.ok{background:var(--teal-light);color:#12574c}
+  .feedback.bad{background:var(--red-light);color:#8a3a2e}
+
+  .controls{display:flex;justify-content:flex-end;margin-top:20px}
+
+  .nav-bottom{display:flex;justify-content:space-between;margin-top:28px}
+  @media (max-width:600px){ .wrap{padding:0 16px} }
+  mjx-container{max-width:100%;overflow-x:auto;overflow-y:hidden}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a href="index.html">Portal de Representación gráfica</a>
+  <span class="sep">·</span>
+  <a href="repr_b7_intro.html">Bloque 7</a>
+  <span class="sep">·</span>
+  <span class="current">Práctica libre</span>
+</header>
+
+<div class="wrap">
+  <div class="titlebar">
+    <span class="kicker">Bloque 7 · Práctica libre</span>
+    <h1>Optimización</h1>
+    <p>Preguntas aleatorias de teoría y de aplicación del bloque, con la explicación de cada respuesta. Cada vez que entras, el orden cambia. Ten a mano lápiz, papel y la calculadora.</p>
+  </div>
+
+  <div id="gate">
+    <p style="margin:0;color:var(--muted)">Escribe tu nombre para empezar (no hay límite de tiempo ni de intentos):</p>
+    <input type="text" id="nombre" placeholder="Nombre y apellidos">
+    <br>
+    <button class="btn on" onclick="empezar()">Empezar a practicar →</button>
+  </div>
+
+  <div id="quiz">
+    <div class="scoreboard">
+      <span id="contador">Pregunta 1</span>
+      <span><span class="ok" id="okcount">0</span> correctas · <span class="bad" id="badcount">0</span> incorrectas</span>
+    </div>
+
+    <div class="qcard">
+      <span class="qtag" id="qtag">Teoría</span>
+      <div class="qtext" id="qtext">—</div>
+      <div id="opciones"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="controls">
+        <button class="btn on" id="btnSiguiente" onclick="siguiente()" disabled>Siguiente pregunta →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-bottom" style="flex-wrap:wrap;gap:12px">
+    <a class="btn ghost" href="index.html">🏠 Portal</a>
+    <a class="btn ghost" href="repr_b7_intro.html">← Volver a la teoría</a>
+    <a class="btn on" href="https://pepivalenzuela.github.io/panel-matematicas/#panel">Formativas en mi panel →</a>
+    
+  </div>
+</div>
+
+<script>
+// ---------- Banco de preguntas del bloque
+const BANCO_TEORIA = [
+ {
+  "q": "¿Cuál es el primer paso de un problema de optimización?",
+  "o": [
+   "Leer, hacer un dibujo y nombrar las variables",
+   "Igualar a cero",
+   "Derivar",
+   "Dar la respuesta"
+  ],
+  "c": 0,
+  "e": "Sin entender el problema no se puede plantear la función."
+ },
+ {
+  "q": "La función objetivo es…",
+  "o": [
+   "El dominio",
+   "La relación entre las variables",
+   "La derivada",
+   "La magnitud que hay que hacer máxima o mínima"
+  ],
+  "c": 3,
+  "e": "Por ejemplo, el área, el volumen o el coste."
+ },
+ {
+  "q": "La relación (ligadura) entre las variables sirve para…",
+  "o": [
+   "Hallar las asíntotas",
+   "Dejar la función objetivo con una sola variable",
+   "Dibujar la gráfica",
+   "Calcular la derivada segunda"
+  ],
+  "c": 1,
+  "e": "Se despeja una variable y se sustituye."
+ },
+ {
+  "q": "¿Por qué hay que fijar el dominio de la variable?",
+  "o": [
+   "Porque solo valen valores con sentido (longitudes positivas, etc.)",
+   "Para hallar asíntotas",
+   "No hace falta",
+   "Porque lo pide la derivada"
+  ],
+  "c": 0,
+  "e": "Un punto crítico fuera del dominio no es solución."
+ },
+ {
+  "q": "Una vez escrita la función de una variable, los candidatos a óptimo se buscan…",
+  "o": [
+   "Resolviendo f′(x) = 0",
+   "Resolviendo f″(x) = 0",
+   "Dando valores",
+   "Resolviendo f(x) = 0"
+  ],
+  "c": 0,
+  "e": "Puntos críticos."
+ },
+ {
+  "q": "Si f′(x₀) = 0 y f″(x₀) &lt; 0, en x₀ hay…",
+  "o": [
+   "Un mínimo",
+   "Un máximo",
+   "Una inflexión",
+   "Una asíntota"
+  ],
+  "c": 1,
+  "e": "Criterio de la segunda derivada."
+ },
+ {
+  "q": "Si la variable está en un intervalo cerrado [a, b]…",
+  "o": [
+   "No hay óptimo",
+   "El óptimo siempre está donde f′ = 0",
+   "Hay que comparar también f(a) y f(b) con los puntos críticos",
+   "El óptimo siempre está en a"
+  ],
+  "c": 2,
+  "e": "Weierstrass: el máximo o el mínimo puede estar en un extremo."
+ },
+ {
+  "q": "La respuesta a un problema de optimización debe…",
+  "o": [
+   "Contestar lo que se pregunta, con unidades",
+   "Ser solo el valor de x",
+   "Ser la derivada",
+   "Ser la función objetivo"
+  ],
+  "c": 0,
+  "e": "Si preguntan las dimensiones, hay que dar todas."
+ },
+ {
+  "q": "De todos los rectángulos con el mismo perímetro, el de área máxima es…",
+  "o": [
+   "Ninguno: no hay máximo",
+   "El cuadrado",
+   "El más largo",
+   "El más estrecho"
+  ],
+  "c": 1,
+  "e": "Con perímetro 2p: A = x(p − x), máximo en x = p/2."
+ },
+ {
+  "q": "En una caja sin tapa de base cuadrada de lado x y altura h, la superficie es…",
+  "o": [
+   "4x + h",
+   "2x² + 4xh",
+   "x²h",
+   "x² + 4xh"
+  ],
+  "c": 3,
+  "e": "Una base y cuatro caras laterales."
+ },
+ {
+  "q": "Al cortar cuadrados de lado x en las esquinas de una lámina cuadrada de lado L, la caja tiene volumen…",
+  "o": [
+   "\\(x(L-2x)^2\\)",
+   "\\((L-x)^3\\)",
+   "\\(x^2(L-x)\\)",
+   "\\(x(L-x)^2\\)"
+  ],
+  "c": 0,
+  "e": "Base (L − 2x)², altura x."
+ },
+ {
+  "q": "Para minimizar la distancia de un punto a una curva conviene minimizar…",
+  "o": [
+   "La pendiente",
+   "El cuadrado de la distancia",
+   "El área",
+   "La raíz de la distancia"
+  ],
+  "c": 1,
+  "e": "Tienen el mínimo en el mismo punto y d² no lleva raíz."
+ },
+ {
+  "q": "Un punto crítico que cae fuera del dominio del problema…",
+  "o": [
+   "Es un máximo",
+   "Es un mínimo",
+   "Es la solución",
+   "Se descarta"
+  ],
+  "c": 3,
+  "e": "No tiene sentido en el contexto."
+ },
+ {
+  "q": "En economía, el beneficio es…",
+  "o": [
+   "Ingresos menos costes",
+   "Ingresos por costes",
+   "El precio por las unidades",
+   "Costes menos ingresos"
+  ],
+  "c": 0,
+  "e": "B(x) = I(x) − C(x)."
+ },
+ {
+  "q": "Si f′ &gt; 0 a la izquierda de x₀ y f′ &lt; 0 a la derecha, en x₀ hay…",
+  "o": [
+   "Una inflexión",
+   "Un máximo",
+   "Nada",
+   "Un mínimo"
+  ],
+  "c": 1,
+  "e": "Sube y luego baja."
+ },
+ {
+  "q": "¿Qué diferencia hay entre máximo relativo y absoluto?",
+  "o": [
+   "El absoluto es el mayor valor de f en todo el dominio; el relativo, solo cerca del punto",
+   "Ninguna",
+   "El absoluto solo existe en polinomios",
+   "El relativo es siempre mayor"
+  ],
+  "c": 0,
+  "e": "Un máximo relativo puede no ser el mayor valor de la función."
+ }
+];
+
+const BANCO_APLICACION = [
+ {
+  "q": "De una lámina cuadrada de 12 cm se cortan cuadrados de lado x en las esquinas para hacer una caja sin tapa. ¿Qué x da volumen máximo?",
+  "o": [
+   "3 cm",
+   "6 cm",
+   "4 cm",
+   "2 cm"
+  ],
+  "c": 3,
+  "e": "V = x(12 − 2x)²; V′ = (12 − 2x)(12 − 6x) = 0 ⇒ x = 2 (x = 6 no vale)."
+ },
+ {
+  "q": "En la caja anterior (lámina de 12 cm), ¿cuál es el volumen máximo?",
+  "o": [
+   "108 cm³",
+   "128 cm³",
+   "64 cm³",
+   "144 cm³"
+  ],
+  "c": 1,
+  "e": "V(2) = 2·8² = 128."
+ },
+ {
+  "q": "Una caja sin tapa de base cuadrada tiene 32 cm³. ¿Cuánto mide el lado de la base si se usa el mínimo de cartón?",
+  "o": [
+   "4 cm",
+   "2 cm",
+   "8 cm",
+   "32 cm"
+  ],
+  "c": 0,
+  "e": "S = x² + 128/x; S′ = 2x − 128/x² = 0 ⇒ x³ = 64."
+ },
+ {
+  "q": "¿Cuál es el área máxima de un rectángulo de perímetro 20 cm?",
+  "o": [
+   "20 cm²",
+   "24 cm²",
+   "100 cm²",
+   "25 cm²"
+  ],
+  "c": 3,
+  "e": "A = x(10 − x), máximo en x = 5: un cuadrado de 5 cm."
+ },
+ {
+  "q": "Dos números positivos suman 20. ¿Cuál es el máximo de su producto?",
+  "o": [
+   "400",
+   "200",
+   "100",
+   "91"
+  ],
+  "c": 2,
+  "e": "P = x(20 − x), máximo en x = 10."
+ },
+ {
+  "q": "Dos números positivos x e y suman 20 y x·y² es máximo. ¿Cuánto vale y?",
+  "o": [
+   "15",
+   "20/3",
+   "10",
+   "40/3"
+  ],
+  "c": 3,
+  "e": "P = (20 − y)y²; P′ = 40y − 3y² = 0 ⇒ y = 40/3."
+ },
+ {
+  "q": "El coste medio es \\(\\bar C(x) = x + \\dfrac{100}{x}\\). ¿Cuántas unidades lo minimizan?",
+  "o": [
+   "50",
+   "100",
+   "10",
+   "20"
+  ],
+  "c": 2,
+  "e": "C̄′ = 1 − 100/x² = 0 ⇒ x = 10."
+ },
+ {
+  "q": "El beneficio es \\(B(x) = -x^2 + 40x - 300\\) (miles de €). ¿Cuál es el beneficio máximo?",
+  "o": [
+   "100 mil €",
+   "300 mil €",
+   "400 mil €",
+   "20 mil €"
+  ],
+  "c": 0,
+  "e": "B′ = −2x + 40 = 0 ⇒ x = 20; B(20) = −400 + 800 − 300 = 100."
+ },
+ {
+  "q": "¿Qué ordenada tienen los puntos de y = x² más cercanos al punto (0, 2)?",
+  "o": [
+   "1/2",
+   "1",
+   "3/2",
+   "2"
+  ],
+  "c": 2,
+  "e": "d² = x⁴ − 3x² + 4; (d²)′ = 0 ⇒ x² = 3/2 ⇒ y = 3/2."
+ },
+ {
+  "q": "Con 100 m de valla se cerca un terreno rectangular junto a un río (ese lado no se valla). ¿Cuál es el área máxima?",
+  "o": [
+   "625 m²",
+   "2500 m²",
+   "1250 m²",
+   "1000 m²"
+  ],
+  "c": 2,
+  "e": "A = x(100 − 2x); máximo en x = 25: 25 × 50."
+ },
+ {
+  "q": "Los ingresos son \\(I(p) = p(100 - 2p)\\). ¿Qué precio p los hace máximos?",
+  "o": [
+   "100",
+   "20",
+   "25",
+   "50"
+  ],
+  "c": 2,
+  "e": "I′ = 100 − 4p = 0."
+ },
+ {
+  "q": "¿Cuál es el mínimo absoluto de \\(f(x) = x^3 - 3x\\) en [0, 2]?",
+  "o": [
+   "2, en x = 2",
+   "−2, en x = 1",
+   "0, en x = 0",
+   "−2, en x = 0"
+  ],
+  "c": 1,
+  "e": "Candidatos: f(0) = 0, f(1) = −2, f(2) = 2."
+ },
+ {
+  "q": "¿Cuál es el máximo absoluto de \\(f(x) = x^3 - 3x\\) en [−2, 3]?",
+  "o": [
+   "18, en x = 3",
+   "−2, en x = −2",
+   "2, en x = 2",
+   "2, en x = −1"
+  ],
+  "c": 0,
+  "e": "f(−2) = −2, f(−1) = 2, f(1) = −2, f(3) = 18."
+ },
+ {
+  "q": "¿Qué número positivo hace máxima la diferencia entre él y su cuadrado?",
+  "o": [
+   "1/4",
+   "1",
+   "2",
+   "1/2"
+  ],
+  "c": 3,
+  "e": "f(x) = x − x²; f′ = 1 − 2x = 0."
+ },
+ {
+  "q": "¿Cuál es el valor mínimo de \\(x + \\dfrac{1}{x}\\) para x &gt; 0?",
+  "o": [
+   "2",
+   "1/2",
+   "1",
+   "0"
+  ],
+  "c": 0,
+  "e": "f′ = 1 − 1/x² = 0 ⇒ x = 1; f(1) = 2."
+ },
+ {
+  "q": "Un rectángulo tiene 36 m² de área. ¿Cuál es su perímetro mínimo?",
+  "o": [
+   "20 m",
+   "26 m",
+   "24 m",
+   "36 m"
+  ],
+  "c": 2,
+  "e": "P = 2x + 72/x; P′ = 2 − 72/x² = 0 ⇒ x = 6: un cuadrado de 6 m."
+ }
+];
+
+let orden = [];
+let idx = 0;
+let ok = 0, bad = 0;
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function empezar(){
+  const nombre = document.getElementById('nombre').value.trim();
+  if(!nombre){ alert('Escribe tu nombre para empezar.'); return; }
+  document.getElementById('gate').style.display='none';
+  document.getElementById('quiz').style.display='block';
+  generarSecuencia();
+  mostrarPregunta();
+}
+
+function generarSecuencia(){
+  const todas = shuffle(
+    BANCO_TEORIA.map(x=>({...x,tipo:'teoria'})).concat(
+    BANCO_APLICACION.map(x=>({...x,tipo:'aplicacion'})))
+  );
+  orden = todas;
+  idx = 0; ok = 0; bad = 0;
+}
+
+function mostrarPregunta(){
+  if(idx >= orden.length){ generarSecuencia(); }
+  const item = orden[idx];
+  document.getElementById('contador').textContent = `Pregunta ${idx+1}`;
+  document.getElementById('okcount').textContent = ok;
+  document.getElementById('badcount').textContent = bad;
+  const tag = document.getElementById('qtag');
+  tag.textContent = item.tipo === 'teoria' ? 'Teoría' : 'Aplicación';
+  tag.className = 'qtag ' + item.tipo;
+  document.getElementById('qtext').innerHTML = item.q;
+
+  const opciones = shuffle(item.o.map((texto,i)=>({texto, esCorrecta:i===item.c})));
+  const cont = document.getElementById('opciones');
+  cont.innerHTML='';
+  opciones.forEach(op=>{
+    const btn = document.createElement('button');
+    btn.className='opt';
+    btn.innerHTML = op.texto;
+    btn.onclick = ()=>responder(btn, op.esCorrecta, opciones, cont);
+    cont.appendChild(btn);
+  });
+
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('btnSiguiente').disabled = true;
+  if(window.MathJax){ MathJax.typesetClear([cont, document.getElementById('qtext')]); MathJax.typesetPromise([cont, document.getElementById('qtext')]); }
+}
+
+function responder(btnPulsado, esCorrecta, opciones, cont){
+  const botones = cont.querySelectorAll('.opt');
+  botones.forEach(b=>b.disabled=true);
+  botones.forEach((b,i)=>{
+    if(opciones[i].esCorrecta) b.classList.add('correcta');
+  });
+  if(!esCorrecta) btnPulsado.classList.add('incorrecta');
+
+  const fb = document.getElementById('feedback');
+  const exp = orden[idx] && orden[idx].e ? '<div style="margin-top:8px;font-weight:400">💡 ' + orden[idx].e + '</div>' : '';
+  if(esCorrecta){
+    ok++;
+    fb.innerHTML = '<b>✓ Correcto.</b>' + exp;
+    fb.className = 'feedback show ok';
+  } else {
+    bad++;
+    fb.innerHTML = '<b>✗ No es correcto. La respuesta correcta está marcada en verde.</b>' + exp;
+    fb.className = 'feedback show bad';
+  }
+  if(window.MathJax && MathJax.typesetPromise){ MathJax.typesetPromise([fb]).catch(()=>{}); }
+  document.getElementById('okcount').textContent = ok;
+  document.getElementById('badcount').textContent = bad;
+  document.getElementById('btnSiguiente').disabled = false;
+}
+
+function siguiente(){
+  idx++;
+  mostrarPregunta();
+}
+</script>
+
+</body>
+</html>

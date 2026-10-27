@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Representación gráfica · Las Chapas ECOS</title>
+<script>
+  window.MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] }, svg: { fontCache: 'global' } };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1a2e4a;
+    --navy-light:#2a4468;
+    --teal:#1d7a6b;
+    --teal-light:#e4f2ef;
+    --orange:#e07b3a;
+    --orange-light:#fdeee0;
+    --cream:#f5f2eb;
+    --ink:#2b2b2b;
+    --muted:#6b6f76;
+    --white:#ffffff;
+    --line:#e4e0d6;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:'Nunito Sans',sans-serif;
+    background:var(--cream);
+    color:var(--ink);
+    line-height:1.6;
+  }
+  h1,h2,h3,.brand{font-family:'Nunito',sans-serif}
+  a{color:inherit;text-decoration:none}
+
+  header.top{
+    background:var(--navy);
+    color:var(--white);
+    padding:14px 24px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  header.top .brand{font-weight:800;font-size:1.05rem;letter-spacing:.2px}
+  header.top .brand span{color:var(--orange)}
+  header.top .tag{font-size:.8rem;color:#c7d0dd;font-weight:600}
+
+  .hero{
+    max-width:920px;
+    margin:0 auto;
+    padding:56px 24px 20px;
+    text-align:center;
+  }
+  .hero .eyebrow{
+    display:inline-block;
+    background:var(--orange-light);
+    color:var(--orange);
+    font-weight:800;
+    font-size:.78rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    padding:6px 14px;
+    border-radius:100px;
+    margin-bottom:18px;
+  }
+  .hero h1{
+    font-size:2.6rem;
+    font-weight:900;
+    color:var(--navy);
+    margin:0 0 14px;
+    letter-spacing:-.02em;
+  }
+  .hero h1 em{
+    font-style:normal;
+    color:var(--teal);
+  }
+  .hero p.sub{
+    font-size:1.08rem;
+    color:var(--muted);
+    max-width:680px;
+    margin:0 auto;
+  }
+
+  .motivante{
+    max-width:820px;
+    margin:36px auto 0;
+    padding:0 24px;
+  }
+  .card-ib{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-left:6px solid var(--teal);
+    border-radius:14px;
+    padding:26px 28px;
+    box-shadow:0 2px 10px rgba(26,46,74,.05);
+  }
+  .card-ib h3{
+    margin:0 0 10px;
+    color:var(--teal);
+    font-size:1.02rem;
+    font-weight:800;
+  }
+  .card-ib p{margin:0 0 12px;color:var(--ink)}
+  .card-ib p:last-child{margin-bottom:0}
+  .card-ib .indagacion{
+    background:var(--teal-light);
+    border-radius:10px;
+    padding:16px 18px;
+    margin-top:14px;
+    font-weight:700;
+    color:var(--navy);
+  }
+  .conceptos{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:16px;
+  }
+  .conceptos span{
+    background:var(--navy);
+    color:#fff;
+    font-size:.78rem;
+    font-weight:700;
+    padding:5px 12px;
+    border-radius:100px;
+  }
+
+  section.bloques{
+    max-width:1040px;
+    margin:52px auto;
+    padding:0 24px;
+  }
+  section.bloques h2{
+    text-align:center;
+    color:var(--navy);
+    font-size:1.5rem;
+    margin-bottom:6px;
+  }
+  section.bloques p.lead{
+    text-align:center;
+    color:var(--muted);
+    margin:0 auto 34px;
+    max-width:560px;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
+    gap:20px;
+  }
+  .bloque-card{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:16px;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .bloque-card.activo:hover{
+    transform:translateY(-3px);
+    box-shadow:0 10px 24px rgba(26,46,74,.1);
+  }
+  .bloque-card .visual{
+    height:96px;
+    background:linear-gradient(135deg,var(--navy),var(--navy-light));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    font-size:1.3rem;
+    font-weight:800;
+    letter-spacing:.02em;
+  }
+  .bloque-card.pendiente .visual{
+    background:linear-gradient(135deg,#cfc9ba,#e4e0d3);
+    color:#9b968a;
+  }
+  .bloque-card .body{padding:20px 22px 22px;flex:1;display:flex;flex-direction:column}
+  .bloque-card .num{
+    color:var(--orange);
+    font-weight:800;
+    font-size:.78rem;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    margin-bottom:4px;
+  }
+  .bloque-card h3{margin:0 0 8px;color:var(--navy);font-size:1.15rem}
+  .bloque-card p{color:var(--muted);font-size:.92rem;margin:0 0 16px;flex:1}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+  .tags span{
+    background:var(--teal-light);
+    color:var(--teal);
+    font-size:.72rem;
+    font-weight:700;
+    padding:4px 10px;
+    border-radius:100px;
+  }
+  .btn{
+    display:inline-block;
+    text-align:center;
+    padding:11px 18px;
+    border-radius:10px;
+    font-weight:800;
+    font-size:.92rem;
+  }
+  .btn.on{background:var(--teal);color:#fff}
+  .btn.on:hover{background:#166357}
+  .btn.off{background:#ece9df;color:#a6a196;cursor:default}
+
+  footer{
+    text-align:center;
+    padding:36px 24px 44px;
+    color:var(--muted);
+    font-size:.85rem;
+    border-top:1px solid var(--line);
+    margin-top:20px;
+  }
+  .esquema{
+    max-width:1100px;
+    margin:44px auto 0;
+    padding:0 24px;
+  }
+  .esquema .card-esquema{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:24px;
+    text-align:center;
+  }
+  .esquema h3{
+    color:var(--navy);
+    font-size:1.15rem;
+    margin:0 0 6px;
+  }
+  .esquema p.nota{
+    color:var(--muted);
+    font-size:.9rem;
+    margin:0 0 18px;
+  }
+  .esquema img{
+    max-width:100%;
+    height:auto;
+    border-radius:10px;
+    border:1px solid var(--line);
+    cursor:zoom-in;
+  }
+  .esquema{
+    max-width:1100px;
+    margin:44px auto 0;
+    padding:0 24px;
+  }
+  .esquema .card-esquema{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:24px;
+    text-align:center;
+  }
+  .esquema h3{
+    color:var(--navy);
+    font-size:1.15rem;
+    margin:0 0 6px;
+  }
+  .esquema p.nota{
+    color:var(--muted);
+    font-size:.9rem;
+    margin:0 0 18px;
+  }
+  .esquema img{
+    max-width:100%;
+    height:auto;
+    border-radius:10px;
+    border:1px solid var(--line);
+    cursor:zoom-in;
+  }
+</style>
+<style>
+  .esq{text-align:left}
+  .esq h3,.esq p.nota{text-align:center}
+  .esq-top{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:6px 0 18px}
+  .esq-tit{background:#111;color:#fff;font-family:Nunito,sans-serif;font-weight:900;font-size:1.25rem;padding:10px 20px;border-radius:10px;text-transform:uppercase;letter-spacing:.02em;text-align:center}
+  .esq-lat{color:#fff;font-weight:800;font-size:.85rem;padding:7px 14px;border-radius:8px;text-transform:uppercase}
+  .esq-lat.l{background:#8a1c3c} .esq-lat.r{background:#1c3f8a}
+  .esq-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  @media (max-width:900px){.esq-grid{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:560px){.esq-grid{grid-template-columns:1fr}.esq-lat{display:none}.esq-tit{font-size:1rem}}
+  .esq-c{border:2px solid var(--k);border-radius:12px;overflow:hidden;background:#fff;display:flex;flex-direction:column;min-width:0}
+  .esq-c p{margin:8px 12px;font-size:.88rem;color:var(--ink)}
+  .esq-h{background:var(--k);color:#fff;font-family:Nunito,sans-serif;font-weight:900;padding:9px 12px;font-size:.98rem;text-transform:uppercase}
+  .esq-h small{font-size:.75rem;opacity:.85}
+  .esq-f{margin:4px 12px 8px;background:var(--kl);border:1.5px solid var(--k);border-radius:8px;padding:8px;text-align:center;color:var(--navy);font-size:.95rem;overflow-x:auto}
+  .esq-c .esq-f:first-of-type{margin-top:auto}
+  .c1{--k:#2f7a3a;--kl:#e8f4ea}.c2{--k:#5b2d9e;--kl:#f0eafb}.c3{--k:#1f4fa8;--kl:#e7eefb}.c4{--k:#7a3415;--kl:#f8ece6}.c5{--k:#d27411;--kl:#fdf0e1}.c6{--k:#178a99;--kl:#e2f4f6}
+  .esq-ej{border:2px solid #1c2a6b;border-radius:12px;margin-top:16px;padding:0 0 10px;position:relative}
+  .esq-ejt{background:#1c2a6b;color:#fff;font-weight:900;text-transform:uppercase;display:inline-block;padding:4px 16px;border-radius:0 0 10px 0;font-family:Nunito,sans-serif}
+  .esq-ejg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 16px;padding:10px 14px 0;font-size:.86rem}
+  .esq-ejg>div{min-width:0;overflow-x:auto}
+  @media (max-width:900px){.esq-ejg{grid-template-columns:repeat(2,1fr)}} @media (max-width:560px){.esq-ejg{grid-template-columns:1fr}}
+  .esq-ejg b{display:block;font-size:.82rem;text-transform:uppercase;margin-bottom:2px}
+  .t1{color:#2f7a3a}.t2{color:#5b2d9e}.t3{color:#1f4fa8}.t4{color:#7a3415}.t5{color:#d27411}.t6{color:#178a99}
+  .esq-nota{margin-top:12px;border:2px solid #5b2d9e;border-radius:10px;padding:10px 14px;font-size:.9rem;background:#faf7ff}
+  mjx-container{max-width:100%}
+  @media (max-width:600px){header.top{flex-wrap:wrap;gap:4px}.hero h1{font-size:1.9rem}}
+</style>
+<body>
+
+<header class="top">
+  <div class="brand">Las Chapas ECOS <span>·</span> Matemáticas</div>
+  <div class="tag">2º Bachillerato · Matemáticas II y Matemáticas Aplicadas a las CCSS II</div>
+</header>
+
+<div class="hero">
+  <span class="eyebrow">Representación gráfica de funciones</span>
+  <h1>Dibujar una función <em>sin dar valores al azar</em></h1>
+  <p class="sub">Con el dominio, las asíntotas y las dos primeras derivadas podemos saber cómo es la gráfica de cualquier función: dónde crece, dónde tiene sus máximos y mínimos y cómo se curva. En este tema lo aplicamos a cada familia de funciones y a problemas de optimización.</p>
+</div>
+
+<div class="esquema">
+  <div class="card-esquema esq">
+    <h3>🗺️ ¿Cómo hacer la representación gráfica de cualquier función?</h3>
+    <p class="nota">Los pasos que seguiremos siempre, en este orden. Guárdatelo como referencia.</p>
+    <div class="esq-top"><span class="esq-lat l">Paso a paso</span><span class="esq-tit">Representación gráfica</span><span class="esq-lat r">Con ejemplos</span></div>
+    <div class="esq-grid">
+      <div class="esq-c c1"><div class="esq-h">1 · Dominio</div>
+        <p>Valores de x donde existe la función.</p>
+        <div class="esq-f">\(f(x)=\frac{1}{x-2}\Rightarrow D=\mathbb{R}-\{2\}\)</div></div>
+      <div class="esq-c c2"><div class="esq-h">2 · Cortes con los ejes</div>
+        <p>Eje OY: x = 0. Eje OX: f(x) = 0.</p>
+        <div class="esq-f">\(x^2-4=0\Rightarrow(\pm2,\,0)\)</div></div>
+      <div class="esq-c c3"><div class="esq-h">3 · Simetría</div>
+        <p>Par: f(−x) = f(x). Impar: f(−x) = −f(x).</p>
+        <div class="esq-f">\(x^2\) par · \(x^3\) impar</div></div>
+      <div class="esq-c c4"><div class="esq-h">4 · Asíntotas</div>
+        <p>Verticales, horizontales u oblicuas.</p>
+        <div class="esq-f">\(\frac{1}{x-2}\): AV \(x=2\), AH \(y=0\)</div></div>
+      <div class="esq-c c5"><div class="esq-h">5 · Crecimiento</div>
+        <p>Signo de f′(x).</p>
+        <div class="esq-f">\(f'>0\) crece · \(f'<0\) decrece</div></div>
+      <div class="esq-c c6"><div class="esq-h">6 · Extremos relativos</div>
+        <p>f′(x) = 0 y cambio de signo.</p>
+        <div class="esq-f">\(x^3-3x\): máx \((-1,2)\), mín \((1,-2)\)</div></div>
+      <div class="esq-c c1"><div class="esq-h">7 · Curvatura</div>
+        <p>Signo de f″(x).</p>
+        <div class="esq-f">\(f''>0\) ∪ · \(f''<0\) ∩</div></div>
+      <div class="esq-c c2"><div class="esq-h">8 · Puntos de inflexión</div>
+        <p>f″(x) = 0 y cambio de signo.</p>
+        <div class="esq-f">\(x^3-3x\): inflexión \((0,0)\)</div></div>
+      <div class="esq-c c3"><div class="esq-h">9 · Tabla de valores</div>
+        <p>Algunos puntos más para ajustar el dibujo.</p>
+        <div class="esq-f">\(x=\pm2\Rightarrow f=\pm2\)</div></div>
+      <div class="esq-c c4"><div class="esq-h">10 · Regiones</div>
+        <p>Dónde f es positiva o negativa.</p>
+        <div class="esq-f">\(x^2-4&lt;0\) en \((-2,2)\)</div></div>
+      <div class="esq-c c5"><div class="esq-h">11 · Dibujar la gráfica</div>
+        <p>Reunir toda la información.</p>
+        <div class="esq-f">✔ ¡Ya puedes representar la función!</div></div>
+    </div>
+    <div class="esq-nota">💡 <b>Consejo:</b> sigue siempre el orden 1 → 11. Cada paso usa lo que ya sabes del anterior: por ejemplo, las asíntotas verticales salen del dominio y los extremos, del signo de f′.</div>
+  </div>
+</div>
+
+<section class="bloques">
+  <h2>📚 Bloques</h2>
+  <p class="lead">Cada bloque tiene su teoría con ejemplos resueltos y una práctica libre con preguntas aleatorias. Las formativas se hacen en tu panel.</p>
+
+  <div class="grid">
+
+    <div class="bloque-card activo">
+      <div class="visual">11 pasos</div>
+      <div class="body">
+        <div class="num">Bloque 1</div>
+        <h3>Estudio general de una función</h3>
+        <p>Dominio, cortes, simetría, asíntotas, crecimiento, extremos, curvatura e inflexión. Con un explorador interactivo.</p>
+        <div class="tags"><span>Teoría</span><span>Simulador</span><span>Práctica</span></div>
+        <a class="btn on" href="repr_b1_intro.html">Entrar →</a>
+      </div>
+    </div>
+
+    <div class="bloque-card activo">
+      <div class="visual">x³ − 3x</div>
+      <div class="body">
+        <div class="num">Bloque 2</div>
+        <h3>Funciones polinómicas</h3>
+        <p>De la recta y la parábola a cualquier polinomio: comportamiento en el infinito, estudio completo y cálculo de coeficientes.</p>
+        <div class="tags"><span>Teoría</span><span>PEvAU</span><span>Práctica</span></div>
+        <a class="btn on" href="repr_b2_intro.html">Entrar →</a>
+      </div>
+    </div>
+
+    <div class="bloque-card activo">
+      <div class="visual">AV · AH · AO</div>
+      <div class="body">
+        <div class="num">Bloque 3</div>
+        <h3>Funciones racionales</h3>
+        <p>Dominio, asíntotas verticales, horizontales y oblicuas, huecos y estudio completo.</p>
+        <div class="tags"><span>Teoría</span><span>Práctica</span></div>
+        <a class="btn on" href="repr_b3_intro.html">Entrar →</a>
+      </div>
+    </div>
+
+    <div class="bloque-card activo">
+      <div class="visual">x·eˣ</div>
+      <div class="body">
+        <div class="num">Bloque 4</div>
+        <h3>Funciones exponenciales</h3>
+        <p>Propiedades de eˣ, límites con L'Hôpital, campana de Gauss y modelos reales.</p>
+        <div class="tags"><span>Teoría</span><span>Práctica</span></div>
+        <a class="btn on" href="repr_b4_intro.html">Entrar →</a>
+      </div>
+    </div>
+
+    <div class="bloque-card activo">
+      <div class="visual">ln x / x</div>
+      <div class="body">
+        <div class="num">Bloque 5</div>
+        <h3>Funciones logarítmicas</h3>
+        <p>Dominio, asíntotas verticales y estudio completo de funciones con ln x.</p>
+        <div class="tags"><span>Teoría</span><span>Práctica</span></div>
+        <a class="btn on" href="repr_b5_intro.html">Entrar →</a>
+      </div>
+    </div>
+
+    <div class="bloque-card activo">
+      <div class="visual">|x² − 4|</div>
+      <div class="body">
+        <div class="num">Bloque 6</div>
+        <h3>Funciones a trozos y valor absoluto</h3>
+        <p>Continuidad y derivabilidad en los puntos de unión, parámetros, valor absoluto y extremos absolutos.</p>
+        <div class="tags"><span>Teoría</span><span>PEvAU</span><span>Práctica</span></div>
+        <a class="btn on" href="repr_b6_intro.html">Entrar →</a>
+      </div>
+    </div>
+
+    <div class="bloque-card activo">
+      <div class="visual">máx · mín</div>
+      <div class="body">
+        <div class="num">Bloque 7</div>
+        <h3>Optimización</h3>
+        <p>Los 7 pasos para resolver problemas de máximos y mínimos. Con simulador de la caja.</p>
+        <div class="tags"><span>Teoría</span><span>Simulador</span><span>Práctica</span></div>
+        <a class="btn on" href="repr_b7_intro.html">Entrar →</a>
+      </div>
+    </div>
+
+    <div class="bloque-card activo">
+      <div class="visual">🎯</div>
+      <div class="body">
+        <div class="num">Mi panel</div>
+        <h3>Formativas de cada bloque</h3>
+        <p>Entra con tu contraseña para hacer la Parte 1 · Teoría y la Parte 2 · Aplicación de cada bloque, practicar lo que te cuesta y ver cómo avanzas.</p>
+        <div class="tags"><span>Formativas</span><span>Mi progreso</span></div>
+        <a class="btn on" href="https://pepivalenzuela.github.io/panel-matematicas/#panel">Ir a mi panel →</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  Las Chapas ECOS · Departamento de Matemáticas · 2º Bachillerato
+</footer>
+
+</body>
+</html>

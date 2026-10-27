@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloque 7 — Optimización · Representación gráfica · Las Chapas ECOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  window.MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] }, svg: { fontCache: 'global' } };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+<style>
+  :root{
+    --navy:#1a2e4a;
+    --navy-light:#2a4468;
+    --teal:#1d7a6b;
+    --teal-light:#e4f2ef;
+    --orange:#e07b3a;
+    --orange-light:#fdeee0;
+    --cream:#f5f2eb;
+    --ink:#2b2b2b;
+    --muted:#6b6f76;
+    --white:#ffffff;
+    --line:#e4e0d6;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:'Nunito Sans',sans-serif;
+    background:var(--cream);
+    color:var(--ink);
+    line-height:1.7;
+  }
+  h1,h2,h3,.brand{font-family:'Nunito',sans-serif}
+  a{color:inherit;text-decoration:none}
+
+  header.top{
+    background:var(--navy);
+    color:#fff;
+    padding:14px 24px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:.88rem;
+    font-weight:600;
+    flex-wrap:wrap;
+  }
+  header.top a{color:#cfd8e6}
+  header.top a:hover{color:#fff}
+  header.top .sep{color:#5c6b82}
+  header.top .current{color:#fff;font-weight:800}
+
+  .wrap{max-width:800px;margin:0 auto;padding:0 24px}
+
+  .hero{padding:44px 0 8px;text-align:center}
+  .hero .kicker{
+    display:inline-block;
+    background:var(--orange-light);
+    color:var(--orange);
+    font-weight:800;
+    font-size:.76rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    padding:6px 14px;
+    border-radius:100px;
+    margin-bottom:16px;
+  }
+  .hero h1{
+    font-size:2.15rem;
+    font-weight:900;
+    color:var(--navy);
+    margin:0 0 16px;
+    letter-spacing:-.01em;
+  }
+  .hero h1 em{font-style:normal;color:var(--teal)}
+  .hero p.lead{color:var(--muted);font-size:1.05rem;max-width:620px;margin:0 auto}
+
+  section{padding:34px 0}
+  section h2{
+    color:var(--navy);
+    font-size:1.35rem;
+    margin:0 0 14px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  section h2 .n{
+    background:var(--teal);
+    color:#fff;
+    width:30px;height:30px;
+    border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:.9rem;font-weight:800;
+    flex-shrink:0;
+  }
+  p{margin:0 0 14px}
+
+  .box{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:22px 24px;
+    margin:16px 0;
+  }
+  .box.definicion{
+    border-left:6px solid var(--navy);
+    background:linear-gradient(180deg,#fff,#fbfbf9);
+  }
+  .box.definicion .tag{
+    font-weight:800;color:var(--navy);font-size:.82rem;
+    text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;
+  }
+  .box.ejemplo{border-left:6px solid var(--orange)}
+  .box.ejemplo .tag{color:var(--orange);font-weight:800;font-size:.82rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+
+  .verif{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    background:var(--teal-light);
+    border-radius:10px;
+    padding:14px 18px;
+    margin:14px 0;
+    font-weight:700;
+    color:var(--navy);
+  }
+  .verif .flecha{color:var(--teal);font-size:1.3rem}
+
+  .familia{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:10px;
+    margin:16px 0;
+  }
+  .familia .item{
+    background:var(--navy);
+    color:#fff;
+    text-align:center;
+    padding:12px 8px;
+    border-radius:10px;
+    font-size:.95rem;
+  }
+  .familia .item.destacado{background:var(--orange)}
+
+  table.props{width:100%;border-collapse:collapse;margin:16px 0}
+  table.props td{
+    border:1px solid var(--line);
+    padding:12px 14px;
+    background:#fff;
+  }
+  table.props tr td:first-child{
+    font-weight:700;color:var(--navy);width:38%;
+  }
+
+  .mundo{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:14px;
+    margin:16px 0;
+  }
+  .mundo .item{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 18px;
+  }
+  .mundo .item .k{
+    color:var(--teal);
+    font-weight:800;
+    font-size:.75rem;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    margin-bottom:4px;
+  }
+  .mundo .item h4{margin:0 0 6px;color:var(--navy);font-size:1rem}
+  .mundo .item p{margin:0;color:var(--muted);font-size:.92rem}
+
+  .ib{
+    background:var(--navy);
+    color:#fff;
+    border-radius:16px;
+    padding:28px 26px;
+    margin:38px 0;
+  }
+  .ib h3{margin:0 0 16px;font-size:1.1rem;display:flex;align-items:center;gap:8px}
+  .ib .grid2{display:grid;grid-template-columns:1fr;gap:16px}
+  .ib .card{background:rgba(255,255,255,.08);border-radius:10px;padding:16px 18px}
+  .ib .card .t{font-weight:800;font-size:.82rem;color:#ffd4ae;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+  .ib .card p{margin:0;color:#e6ebf2;font-size:.95rem}
+  .ib .indagacion{
+    background:rgba(224,123,58,.18);
+    border:1px solid rgba(224,123,58,.4);
+    border-radius:10px;
+    padding:18px 20px;
+    margin-bottom:16px;
+  }
+  .ib .indagacion .t{color:var(--orange);font-weight:800;font-size:.82rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+  .ib .indagacion p{margin:0;font-weight:600}
+
+  .nav-bottom{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:30px 0 60px;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .btn{
+    display:inline-block;
+    padding:13px 22px;
+    border-radius:10px;
+    font-weight:800;
+    font-size:.95rem;
+  }
+  .btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+  .btn.ghost:hover{background:#f0ede4}
+  .btn.on{background:var(--teal);color:#fff}
+  .btn.on:hover{background:#166357}
+  .btn.off{background:#ece9df;color:#a6a196;cursor:default}
+
+  .video-box{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:14px;
+    margin:18px 0;
+  }
+  .video-box .vt{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-weight:800;
+    color:var(--navy);
+    font-size:.9rem;
+    margin:2px 6px 12px;
+  }
+  .video-box .vt .dot{
+    width:8px;height:8px;border-radius:50%;background:var(--orange);flex-shrink:0;
+  }
+  .video-box .frame{
+    position:relative;
+    width:100%;
+    padding-top:56.25%;
+    border-radius:10px;
+    overflow:hidden;
+    background:#0d1622;
+  }
+  .video-box .frame iframe{
+    position:absolute;top:0;left:0;width:100%;height:100%;border:0;
+  }
+  .venn-wrap{
+    display:flex;
+    justify-content:center;
+    margin:18px 0;
+    background:#fbfbf9;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:14px;
+  }
+  .venn-wrap svg{max-width:100%;height:auto}
+
+  .lectura{
+    background:#fbfbf9;
+    border:1px dashed var(--line);
+    border-radius:10px;
+    padding:14px 16px;
+    margin:14px 0;
+  }
+  .lectura .lt{
+    font-weight:800;
+    color:var(--navy);
+    font-size:.8rem;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    margin-bottom:10px;
+  }
+  .frase-item{
+    display:flex;
+    align-items:baseline;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:8px;
+    font-size:.92rem;
+  }
+  .frase-item:last-child{margin-bottom:0}
+  .frase{
+    background:var(--orange-light);
+    color:#8a4b1e;
+    padding:2px 8px;
+    border-radius:6px;
+    font-style:italic;
+  }
+  .frase .flecha{color:var(--teal);font-weight:800;font-style:normal}
+  .formula{
+    background:var(--navy);
+    color:#fff;
+    padding:2px 10px;
+    border-radius:6px;
+    font-weight:700;
+    font-size:.88rem;
+  }
+
+  .prop-usada{
+    display:inline-block;
+    background:var(--teal-light);
+    color:var(--teal);
+    font-weight:800;
+    font-size:.72rem;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    padding:3px 9px;
+    border-radius:100px;
+    margin-bottom:6px;
+  }
+
+  table.tabla-datos{
+    border-collapse:collapse;
+    margin:16px auto;
+    background:#fff;
+  }
+  table.tabla-datos th, table.tabla-datos td{
+    border:1px solid var(--line);
+    padding:9px 16px;
+    text-align:center;
+    font-size:.92rem;
+  }
+  table.tabla-datos th{
+    background:var(--navy);
+    color:#fff;
+    font-weight:700;
+  }
+  table.tabla-datos td.total{
+    background:#fbfbf9;
+    font-weight:800;
+    color:var(--navy);
+  }
+  .cartas-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:20px;
+    margin:18px 0;
+  }
+  .carta{
+    perspective:1600px;
+    height:320px;
+    cursor:pointer;
+  }
+  .carta-inner{
+    position:relative;
+    width:100%;
+    height:100%;
+    text-align:left;
+    transition:transform .6s cubic-bezier(.4,.2,.2,1);
+    transform-style:preserve-3d;
+  }
+  .carta.volteada .carta-inner{transform:rotateY(180deg)}
+  .carta-cara{
+    position:absolute;
+    inset:0;
+    backface-visibility:hidden;
+    border-radius:14px;
+    padding:20px;
+    overflow-y:auto;
+    box-shadow:0 4px 16px rgba(26,46,74,.08);
+    border:1px solid var(--line);
+  }
+  .carta-frente{background:#fff;display:flex;flex-direction:column}
+  .carta-frente .num{color:var(--orange);font-weight:800;font-size:.74rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+  .carta-frente .fuente{color:var(--muted);font-size:.76rem;margin-bottom:10px}
+  .carta-frente .enunciado{font-size:.9rem;color:var(--ink);line-height:1.5;flex:1}
+  .carta-frente .toque{margin-top:10px;text-align:center;color:var(--teal);font-weight:700;font-size:.76rem}
+  .carta-reverso{background:var(--navy);color:#fff;transform:rotateY(180deg)}
+  .carta-reverso .tag-sol{color:#ffd4ae;font-weight:800;font-size:.74rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+  .carta-reverso .solucion{font-size:.83rem;line-height:1.55}
+  .carta-reverso .solucion p{margin:0 0 8px}
+  .carta-reverso .solucion p:last-child{margin-bottom:0}
+  .cartas-toolbar{display:flex;gap:10px;margin:0 0 16px;flex-wrap:wrap}
+  .cartas-toolbar button{background:#fff;border:1px solid var(--line);color:var(--navy);font-weight:700;font-size:.84rem;padding:8px 16px;border-radius:100px;cursor:pointer;font-family:inherit}
+  .cartas-toolbar button:hover{background:var(--teal-light);border-color:var(--teal)}
+</style>
+<style>
+  h3.sub{color:var(--navy);font-size:1.08rem;margin:26px 0 10px}
+  .venn-wrap svg{width:100%;max-width:520px;height:auto}
+  .dos-fig,.tres-fig{display:grid;gap:12px;margin:16px 0}
+  .dos-fig{grid-template-columns:repeat(2,1fr)} .tres-fig{grid-template-columns:repeat(3,1fr)}
+  .dos-fig>div,.tres-fig>div{background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px;min-width:0}
+  .dos-fig svg,.tres-fig svg{width:100%;height:auto;display:block}
+  @media (max-width:700px){.dos-fig,.tres-fig{grid-template-columns:1fr}}
+  .solo-m2{display:inline-block;background:#8a1c3c;color:#fff;font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:20px;vertical-align:middle;margin-left:6px;letter-spacing:.02em;text-transform:uppercase;font-family:Nunito,sans-serif}
+  .tag .solo-m2{font-size:.66rem;padding:2px 8px}
+  details.demo{background:#fff;border:1px dashed var(--teal);border-radius:12px;padding:10px 16px;margin:14px 0;overflow-x:auto}
+  details.demo summary{cursor:pointer;font-weight:800;color:var(--teal)}
+  details.demo[open] summary{margin-bottom:8px}
+  .riemann{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0 18px}
+  .r-ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin-bottom:10px;font-size:.92rem;color:var(--navy);font-weight:700}
+  .r-ctrl select{font:inherit;font-weight:600;padding:5px 8px;border-radius:8px;border:1px solid var(--line);max-width:100%}
+  .r-ctrl .r-n{display:flex;align-items:center;gap:8px}
+  .r-ctrl input[type=range]{width:180px;accent-color:#1d7a6b}
+  .riemann canvas{width:100%;height:auto;display:block;border-radius:10px;background:#fff}
+  .r-res{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:10px;font-size:.92rem;color:var(--ink)}
+  .r-res b{color:var(--navy)}
+  table.tabla-datos{max-width:100%;display:block;overflow-x:auto}
+  table.props{display:block;overflow-x:auto;max-width:100%}
+  .box,.propiedad{overflow-x:auto;min-width:0}
+  .cap{text-align:center;font-size:.82rem;color:var(--muted);margin:4px 0 2px;font-weight:700}
+  .pasos{display:block;text-align:center;line-height:2.6;margin:6px 0}
+  mjx-container[display="true"]{display:block;overflow-x:auto;overflow-y:hidden;max-width:100%}
+  @media (max-width:600px){ .wrap{padding:0 16px} .hero h1{font-size:1.7rem} .box{padding:18px 16px} table.tabla-datos th,table.tabla-datos td{padding:7px 9px;font-size:.85rem} .r-ctrl input[type=range]{width:140px} }
+
+  .r-btn{font:inherit;font-weight:800;background:#1d7a6b;color:#fff;border:0;border-radius:8px;padding:6px 14px;cursor:pointer}
+  .e-chk label{font-weight:600;display:flex;align-items:center;gap:5px}
+  .e-ley{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.86rem;font-weight:700;margin:6px 2px}
+  table.e-tab{width:100%;border-collapse:collapse;margin-top:10px;font-size:.9rem}
+  table.e-tab td{border:1px solid var(--line);padding:7px 10px;background:#fff}
+  table.e-tab td:first-child{font-weight:800;color:var(--navy);width:24%;white-space:nowrap}
+  .vol-dos{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .vol-dos figure{margin:0;min-width:0}
+  .vol-dos canvas{width:100%;height:auto;display:block;border-radius:10px;background:#fff;border:1px solid var(--line)}
+  .vol-dos figcaption{text-align:center;font-size:.84rem;color:var(--muted);font-weight:700;margin-top:4px}
+  @media (max-width:700px){.vol-dos{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="index.html">Portal de Representación gráfica</a>
+  <span class="sep">·</span>
+  <span class="current">Bloque 7 · Optimización</span>
+</header>
+
+<div class="wrap">
+  <div class="hero">
+    <span class="kicker">Representación gráfica · Bloque 7</span>
+    <h1>Problemas de <em>optimización</em></h1>
+    <p class="lead">Siete pasos para encontrar el máximo o el mínimo de una magnitud en un problema real.</p>
+  </div>
+
+  <section>
+    <h2><span class="n">1</span> Los 7 pasos de un problema de optimización</h2>
+    <table class="props">
+      <tr><td>1 · Leer y dibujar</td><td>Hacer un dibujo y poner nombre a las variables.</td></tr>
+      <tr><td>2 · Función objetivo</td><td>Escribir lo que hay que hacer máximo o mínimo (área, coste, volumen…).</td></tr>
+      <tr><td>3 · Relación</td><td>Usar el dato del enunciado (la ligadura) para dejar la función con una sola variable.</td></tr>
+      <tr><td>4 · Dominio</td><td>Valores con sentido para la variable (longitudes positivas…).</td></tr>
+      <tr><td>5 · Derivar e igualar a 0</td><td>Puntos críticos: f′(x) = 0.</td></tr>
+      <tr><td>6 · Comprobar</td><td>Que es máximo o mínimo (signo de f′ o de f″) y, si el dominio es cerrado, comparar con los extremos.</td></tr>
+      <tr><td>7 · Responder</td><td>Contestar exactamente lo que se pregunta, con unidades.</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2><span class="n">2</span> La caja de volumen máximo</h2>
+    <div class="box ejemplo"><div class="tag">📝 Ejemplo resuelto</div>
+      <p>De una lámina cuadrada de 12 cm de lado se cortan cuatro cuadrados iguales en las esquinas y se doblan los bordes para hacer una caja sin tapa. ¿Qué lado deben tener los cuadrados para que el volumen sea máximo?</p>
+      <p><b>1-3.</b> Si x es el lado del cuadrado, la base mide 12 − 2x y la altura x: \(V(x) = x(12 - 2x)^2\).</p>
+      <p><b>4.</b> Dominio: 0 &lt; x &lt; 6.</p>
+      <p><b>5.</b> \(V'(x)\)<wbr>\({}= (12-2x)^2 - 4x(12-2x)\)<wbr>\({}= (12-2x)(12-6x)\)<wbr>\({}= 0\)<wbr>\({}\Rightarrow x\)<wbr>\({}= 6\) (fuera) o \(x = 2\).</p>
+      <p><b>6.</b> V′ &gt; 0 en (0, 2) y V′ &lt; 0 en (2, 6): máximo.</p>
+      <p style="margin:0"><b>7.</b> Cuadrados de <strong>2 cm</strong> de lado; la caja mide 8 × 8 × 2 cm y su volumen es <strong>128 cm³</strong>.</p></div>
+    <h3 class="sub">Pruébalo tú: cambia el tamaño del corte</h3>
+    
+    <div class="riemann" id="cajasim">
+      <div class="r-ctrl">
+        <label class="r-n">Lado del cuadrado que se corta: x = <b id="cXv">1.0</b> cm <input type="range" id="cX" min="0.1" max="5.9" step="0.1" value="1" aria-label="Lado del cuadrado cortado"></label>
+        <button type="button" id="cMax" class="r-btn">Ir al máximo</button>
+      </div>
+      <div class="vol-dos">
+        <figure><canvas id="cCaja" width="420" height="320" aria-label="Lámina con las esquinas cortadas y caja que se forma"></canvas><figcaption>La lámina de 12 × 12 cm y la caja que se forma</figcaption></figure>
+        <figure><canvas id="cGraf" width="420" height="320" aria-label="Gráfica del volumen en función de x"></canvas><figcaption>V(x) = x(12 − 2x)²</figcaption></figure>
+      </div>
+      <div class="r-res" id="cRes"></div>
+    </div>
+    <script>
+    (function(){
+      const $ = id => document.getElementById(id), L = 12, V = x => x * (L - 2 * x) ** 2;
+      function caja(x) {
+        const cv = $('cCaja'), g = cv.getContext('2d'), W = cv.width, H = cv.height; g.clearRect(0, 0, W, H); g.fillStyle = '#fff'; g.fillRect(0, 0, W, H);
+        const s = 11, ox = 20, oy = 18;                       // lámina en planta
+        g.fillStyle = 'rgba(29,122,107,.18)'; g.strokeStyle = '#1d7a6b'; g.lineWidth = 1.5;
+        g.beginPath(); g.moveTo(ox + x * s, oy); g.lineTo(ox + (L - x) * s, oy); g.lineTo(ox + (L - x) * s, oy + x * s); g.lineTo(ox + L * s, oy + x * s); g.lineTo(ox + L * s, oy + (L - x) * s);
+        g.lineTo(ox + (L - x) * s, oy + (L - x) * s); g.lineTo(ox + (L - x) * s, oy + L * s); g.lineTo(ox + x * s, oy + L * s); g.lineTo(ox + x * s, oy + (L - x) * s); g.lineTo(ox, oy + (L - x) * s);
+        g.lineTo(ox, oy + x * s); g.lineTo(ox + x * s, oy + x * s); g.closePath(); g.fill(); g.stroke();
+        g.fillStyle = 'rgba(214,69,65,.25)'; [[0, 0], [L - x, 0], [0, L - x], [L - x, L - x]].forEach(([a, b]) => { g.fillRect(ox + a * s, oy + b * s, x * s, x * s); g.strokeStyle = '#d64541'; g.strokeRect(ox + a * s, oy + b * s, x * s, x * s); });
+        g.setLineDash([5, 4]); g.strokeStyle = '#1d7a6b'; g.strokeRect(ox + x * s, oy + x * s, (L - 2 * x) * s, (L - 2 * x) * s); g.setLineDash([]);
+        g.fillStyle = '#d64541'; g.font = 'bold 12px sans-serif'; g.fillText('x', ox + x * s / 2 - 3, oy + x * s / 2 + 4);
+        g.fillStyle = '#1a2e4a'; g.fillText('12 cm', ox + L * s / 2 - 16, oy + L * s + 15);
+        // caja en perspectiva caballera
+        const b = L - 2 * x, k = 10, cx = 185, cy = 300, dx = 0.55, dy = 0.4;
+        const P = (u, v, w) => [cx + (u + v * dx) * k, cy - (w + v * dy) * k];
+        const cara = (pts, c) => { g.beginPath(); pts.forEach((p, i) => { const q = P(...p); i ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1]); }); g.closePath(); g.fillStyle = c; g.fill(); g.strokeStyle = '#145c51'; g.lineWidth = 1.2; g.stroke(); };
+        cara([[0, b, 0], [b, b, 0], [b, b, x], [0, b, x]], 'rgba(29,122,107,.55)');
+        cara([[0, 0, 0], [0, b, 0], [0, b, x], [0, 0, x]], 'rgba(29,122,107,.45)');
+        cara([[0, 0, 0], [b, 0, 0], [b, b, 0], [0, b, 0]], 'rgba(29,122,107,.30)');
+        cara([[b, 0, 0], [b, b, 0], [b, b, x], [b, 0, x]], 'rgba(29,122,107,.65)');
+        cara([[0, 0, 0], [b, 0, 0], [b, 0, x], [0, 0, x]], 'rgba(29,122,107,.75)');
+        g.fillStyle = '#1a2e4a'; g.font = '12px sans-serif'; const q = P(b / 2, 0, 0); g.fillText((12 - 2 * x).toFixed(1) + ' cm', q[0] - 18, q[1] + 15);
+        const r = P(b, 0, x / 2); g.fillText('x = ' + x.toFixed(1), r[0] + 6, r[1] + 4);
+      }
+      function graf(x) {
+        const cv = $('cGraf'), g = cv.getContext('2d'), W = cv.width, H = cv.height, m = 34; g.clearRect(0, 0, W, H); g.fillStyle = '#fff'; g.fillRect(0, 0, W, H);
+        const X = t => m + t / 6 * (W - 2 * m), Y = v => H - m - v / 150 * (H - 2 * m);
+        g.strokeStyle = '#6b6f76'; g.lineWidth = 1.4; g.beginPath(); g.moveTo(m - 6, Y(0)); g.lineTo(W - m + 8, Y(0)); g.moveTo(X(0), H - m + 6); g.lineTo(X(0), m - 12); g.stroke();
+        g.fillStyle = '#6b6f76'; g.font = '11px sans-serif'; g.textAlign = 'center'; for (let t = 1; t <= 6; t++) g.fillText(t, X(t), Y(0) + 15);
+        g.textAlign = 'right'; for (let v = 50; v <= 150; v += 50) g.fillText(v, X(0) - 5, Y(v) + 4); g.textAlign = 'left';
+        g.font = 'italic 12px sans-serif'; g.fillText('x', W - m + 10, Y(0) + 4); g.fillText('V (cm³)', X(0) + 6, m - 14);
+        g.strokeStyle = '#1a2e4a'; g.lineWidth = 2.6; g.beginPath(); for (let i = 0; i <= 300; i++) { const t = 6 * i / 300; i ? g.lineTo(X(t), Y(V(t))) : g.moveTo(X(t), Y(V(t))); } g.stroke();
+        g.setLineDash([4, 4]); g.strokeStyle = '#e07b3a'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(X(2), Y(0)); g.lineTo(X(2), Y(128)); g.lineTo(X(0), Y(128)); g.stroke(); g.setLineDash([]);
+        g.fillStyle = '#e07b3a'; g.font = 'bold 12px sans-serif'; g.fillText('máximo (2, 128)', X(2) + 8, Y(128) - 8);
+        g.fillStyle = '#d64541'; g.beginPath(); g.arc(X(x), Y(V(x)), 6, 0, 7); g.fill();
+      }
+      function dib() { const x = +$('cX').value; $('cXv').textContent = x.toFixed(1); caja(x); graf(x);
+        $('cRes').innerHTML = '<span>Base: <b>' + (12 - 2 * x).toFixed(1) + ' × ' + (12 - 2 * x).toFixed(1) + ' cm</b></span><span>Altura: <b>' + x.toFixed(1) + ' cm</b></span><span>Volumen: <b>' + V(x).toFixed(1) + ' cm³</b></span>'; }
+      $('cMax').addEventListener('click', () => { $('cX').value = 2; dib(); });
+      $('cX').addEventListener('input', dib); dib();
+    })();
+    </script>
+  </section>
+
+  <section>
+    <h2><span class="n">3</span> Problemas geométricos</h2>
+    <div class="box ejemplo"><div class="tag">📝 Ejemplo resuelto · Caja de superficie mínima</div>
+      <p>Una caja sin tapa, de base cuadrada, debe tener 32 cm³. ¿Qué dimensiones gastan menos cartón?</p>
+      <p>Base x × x, altura h: \(x^2h\)<wbr>\({}= 32\)<wbr>\({}\Rightarrow h\)<wbr>\({}= \dfrac{32}{x^2}\). Superficie: \(S = x^2 + 4xh = x^2 + \dfrac{128}{x}\), x &gt; 0.</p>
+      <p style="margin:0">\(S'(x)\)<wbr>\({}= 2x - \dfrac{128}{x^2}\)<wbr>\({}= 0\)<wbr>\({}\Rightarrow x^3\)<wbr>\({}= 64\)<wbr>\({}\Rightarrow x\)<wbr>\({}= 4\); \(S''(4) = 2 + \frac{256}{64} &gt; 0\) → mínimo. Base <strong>4 × 4 cm, altura 2 cm</strong>, con 48 cm² de cartón.</p></div>
+    <div class="box ejemplo"><div class="tag">📝 Ejemplo resuelto · Cercado junto a un río</div>
+      <p>Con 100 m de valla se quiere cercar un terreno rectangular junto a un río (ese lado no se valla). ¿Cuál es el área máxima?</p>
+      <p style="margin:0">Lados perpendiculares x, lado paralelo 100 − 2x: \(A(x) = x(100 - 2x)\), 0 &lt; x &lt; 50. \(A'(x)\)<wbr>\({}= 100 - 4x\)<wbr>\({}= 0\)<wbr>\({}\Rightarrow x\)<wbr>\({}= 25\) y A″ = −4 &lt; 0 → máximo: 25 m × 50 m, <strong>1250 m²</strong>.</p></div>
+    <div class="box ejemplo"><div class="tag">📝 Ejemplo resuelto · Punto más cercano</div>
+      <p>¿Qué puntos de la parábola y = x² están más cerca del punto (0, 2)?</p>
+      <p style="margin:0">Minimizamos el cuadrado de la distancia: \(d^2(x)\)<wbr>\({}= x^2 + (x^2 - 2)^2\)<wbr>\({}= x^4 - 3x^2 + 4\). \((d^2)'\)<wbr>\({}= 4x^3 - 6x\)<wbr>\({}= 0\)<wbr>\({}\Rightarrow x\)<wbr>\({}= 0\) o \(x = \pm\sqrt{3/2}\). En x = 0, d² = 4 (máximo relativo); en \(x = \pm\sqrt{3/2}\), d² = 7/4 (mínimo). Los puntos son \(\left(\pm\sqrt{3/2}, \frac32\right)\).</p></div>
+  </section>
+
+  <section>
+    <h2><span class="n">4</span> Problemas de economía y de números</h2>
+    <div class="box ejemplo"><div class="tag">📝 Ejemplo resuelto · Beneficio</div>
+      <p style="margin:0">El beneficio (miles de €) al vender x unidades es \(B(x) = -x^2 + 40x - 300\). \(B'(x)\)<wbr>\({}= -2x + 40\)<wbr>\({}= 0\)<wbr>\({}\Rightarrow x\)<wbr>\({}= 20\), B″ = −2 &lt; 0 → máximo: <strong>20 unidades, 100 000 €</strong>.</p></div>
+    <div class="box ejemplo"><div class="tag">📝 Ejemplo resuelto · Dos números</div>
+      <p>Dos números positivos suman 20. ¿Cuáles son si el producto de uno por el cuadrado del otro es máximo?</p>
+      <p style="margin:0">x + y = 20 → x = 20 − y. \(P(y) = (20 - y)y^2 = 20y^2 - y^3\), 0 &lt; y &lt; 20. \(P'(y)\)<wbr>\({}= 40y - 3y^2\)<wbr>\({}= y(40 - 3y)\)<wbr>\({}= 0\)<wbr>\({}\Rightarrow y\)<wbr>\({}= \frac{40}{3}\); P″ = 40 − 6y &lt; 0 ahí → máximo. Los números son \(x = \frac{20}{3}\) e \(y = \frac{40}{3}\).</p></div>
+    <div class="verif"><span class="flecha">⚠️</span><span>Si la variable está en un intervalo cerrado [a, b], el óptimo puede estar en un extremo del intervalo: compara siempre f(a), f(b) y los puntos críticos (Bloque 6, Weierstrass).</span></div>
+  </section>
+  <div class="nav-bottom">
+    <a class="btn ghost" href="index.html">🏠 Portal</a>
+    <a class="btn ghost" href="repr_b6_intro.html">← Bloque 6</a>
+    <a class="btn on" href="repr_b7_practica.html">Practicar →</a>
+    <a class="btn on" href="https://pepivalenzuela.github.io/panel-matematicas/#panel">Formativas en mi panel →</a>
+  </div>
+</div>
+</body>
+</html>

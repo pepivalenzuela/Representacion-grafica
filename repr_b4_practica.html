@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloque 4 · Práctica — Representación gráfica · Las Chapas ECOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+<style>
+  :root{
+    --navy:#1a2e4a; --navy-light:#2a4468; --teal:#1d7a6b; --teal-light:#e4f2ef;
+    --orange:#e07b3a; --orange-light:#fdeee0; --cream:#f5f2eb; --ink:#2b2b2b;
+    --muted:#6b6f76; --white:#ffffff; --line:#e4e0d6;
+    --red:#c65b4a; --red-light:#fbeae7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Nunito Sans',sans-serif;background:var(--cream);color:var(--ink);line-height:1.6}
+  h1,h2,h3,.brand{font-family:'Nunito',sans-serif}
+  a{color:inherit;text-decoration:none}
+
+  header.top{background:var(--navy);color:#fff;padding:14px 24px;display:flex;align-items:center;gap:8px;font-size:.88rem;font-weight:600;flex-wrap:wrap}
+  header.top a{color:#cfd8e6}
+  header.top a:hover{color:#fff}
+  header.top .sep{color:#5c6b82}
+  header.top .current{color:#fff;font-weight:800}
+
+  .wrap{max-width:720px;margin:0 auto;padding:30px 24px 60px}
+
+  .titlebar{text-align:center;margin-bottom:22px}
+  .titlebar .kicker{display:inline-block;background:var(--teal-light);color:var(--teal);font-weight:800;font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;padding:6px 14px;border-radius:100px;margin-bottom:12px}
+  .titlebar h1{font-size:1.6rem;color:var(--navy);margin:0 0 6px;font-weight:900}
+  .titlebar p{color:var(--muted);margin:0;font-size:.95rem}
+
+  #gate{background:#fff;border:1px solid var(--line);border-radius:16px;padding:28px;text-align:center}
+  #gate input{width:100%;max-width:340px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;font-size:1rem;font-family:inherit;margin:14px 0}
+  .btn{display:inline-block;padding:13px 26px;border-radius:10px;font-weight:800;font-size:.95rem;border:none;cursor:pointer;font-family:inherit}
+  .btn.on{background:var(--teal);color:#fff}
+  .btn.on:hover{background:#166357}
+  .btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+  .btn.ghost:hover{background:#f0ede4}
+  .btn:disabled{opacity:.5;cursor:default}
+
+  #quiz{display:none}
+  .scoreboard{display:flex;justify-content:space-between;align-items:center;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 20px;margin-bottom:18px;font-weight:700;color:var(--navy);font-size:.9rem}
+  .scoreboard .ok{color:var(--teal)}
+  .scoreboard .bad{color:var(--red)}
+
+  .qcard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px}
+  .qtag{display:inline-block;font-weight:800;font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;padding:4px 10px;border-radius:100px;margin-bottom:14px}
+  .qtag.teoria{background:var(--teal-light);color:var(--teal)}
+  .qtag.aplicacion{background:var(--orange-light);color:var(--orange)}
+  .qtext{font-size:1.15rem;color:var(--navy);font-weight:700;margin-bottom:20px}
+
+  .opt{display:block;width:100%;text-align:left;background:#fbfbf9;border:1.5px solid var(--line);border-radius:10px;padding:13px 16px;margin-bottom:10px;font-family:inherit;font-size:1rem;cursor:pointer;color:var(--ink)}
+  .opt:hover{border-color:var(--teal)}
+  .opt.correcta{background:var(--teal-light);border-color:var(--teal);color:var(--navy);font-weight:700}
+  .opt.incorrecta{background:var(--red-light);border-color:var(--red);color:#8a3a2e;font-weight:700}
+  .opt:disabled{cursor:default}
+
+  .feedback{margin-top:16px;padding:14px 16px;border-radius:10px;font-size:.92rem;display:none}
+  .feedback.show{display:block}
+  .feedback.ok{background:var(--teal-light);color:#12574c}
+  .feedback.bad{background:var(--red-light);color:#8a3a2e}
+
+  .controls{display:flex;justify-content:flex-end;margin-top:20px}
+
+  .nav-bottom{display:flex;justify-content:space-between;margin-top:28px}
+  @media (max-width:600px){ .wrap{padding:0 16px} }
+  mjx-container{max-width:100%;overflow-x:auto;overflow-y:hidden}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a href="index.html">Portal de Representación gráfica</a>
+  <span class="sep">·</span>
+  <a href="repr_b4_intro.html">Bloque 4</a>
+  <span class="sep">·</span>
+  <span class="current">Práctica libre</span>
+</header>
+
+<div class="wrap">
+  <div class="titlebar">
+    <span class="kicker">Bloque 4 · Práctica libre</span>
+    <h1>Funciones exponenciales</h1>
+    <p>Preguntas aleatorias de teoría y de aplicación del bloque, con la explicación de cada respuesta. Cada vez que entras, el orden cambia. Ten a mano lápiz, papel y la calculadora.</p>
+  </div>
+
+  <div id="gate">
+    <p style="margin:0;color:var(--muted)">Escribe tu nombre para empezar (no hay límite de tiempo ni de intentos):</p>
+    <input type="text" id="nombre" placeholder="Nombre y apellidos">
+    <br>
+    <button class="btn on" onclick="empezar()">Empezar a practicar →</button>
+  </div>
+
+  <div id="quiz">
+    <div class="scoreboard">
+      <span id="contador">Pregunta 1</span>
+      <span><span class="ok" id="okcount">0</span> correctas · <span class="bad" id="badcount">0</span> incorrectas</span>
+    </div>
+
+    <div class="qcard">
+      <span class="qtag" id="qtag">Teoría</span>
+      <div class="qtext" id="qtext">—</div>
+      <div id="opciones"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="controls">
+        <button class="btn on" id="btnSiguiente" onclick="siguiente()" disabled>Siguiente pregunta →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-bottom" style="flex-wrap:wrap;gap:12px">
+    <a class="btn ghost" href="index.html">🏠 Portal</a>
+    <a class="btn ghost" href="repr_b4_intro.html">← Volver a la teoría</a>
+    <a class="btn on" href="https://pepivalenzuela.github.io/panel-matematicas/#panel">Formativas en mi panel →</a>
+    <a class="btn ghost" href="repr_b5_intro.html">Bloque 5 →</a>
+  </div>
+</div>
+
+<script>
+// ---------- Banco de preguntas del bloque
+const BANCO_TEORIA = [
+ {
+  "q": "¿Cuál es el dominio de \\(f(x) = a^x\\) (a &gt; 0, a ≠ 1)?",
+  "o": [
+   "ℝ − {0}",
+   "(0, +∞)",
+   "[0, +∞)",
+   "ℝ"
+  ],
+  "c": 3,
+  "e": "Se puede elevar a cualquier exponente real."
+ },
+ {
+  "q": "¿Cuál es el recorrido de \\(f(x) = e^x\\)?",
+  "o": [
+   "ℝ",
+   "(0, +∞)",
+   "(1, +∞)",
+   "[0, +∞)"
+  ],
+  "c": 1,
+  "e": "eˣ siempre es positiva y toma todos los valores positivos."
+ },
+ {
+  "q": "Si 0 &lt; a &lt; 1, la función \\(f(x) = a^x\\) es…",
+  "o": [
+   "Constante",
+   "Creciente",
+   "Primero crece y luego decrece",
+   "Decreciente"
+  ],
+  "c": 3,
+  "e": "Por ejemplo (1/2)ˣ = 2⁻ˣ."
+ },
+ {
+  "q": "¿Qué asíntota tiene \\(f(x) = e^x\\)?",
+  "o": [
+   "AO y = x",
+   "AV x = 0",
+   "AH y = 1",
+   "AH y = 0 cuando x → −∞"
+  ],
+  "c": 3,
+  "e": "eˣ → 0 cuando x → −∞."
+ },
+ {
+  "q": "¿Corta al eje OX la gráfica de \\(f(x) = e^x\\)?",
+  "o": [
+   "Sí, en x = 1",
+   "Sí, en x = 0",
+   "Sí, en x = −1",
+   "No, porque eˣ &gt; 0 siempre"
+  ],
+  "c": 3,
+  "e": "eˣ nunca vale 0."
+ },
+ {
+  "q": "¿Cuál es la derivada de \\(e^{g(x)}\\)?",
+  "o": [
+   "\\(g'(x)\\,e^{g(x)}\\)",
+   "\\(e^{g'(x)}\\)",
+   "\\(g(x)\\,e^{g(x)-1}\\)",
+   "\\(e^{g(x)}\\)"
+  ],
+  "c": 0,
+  "e": "Regla de la cadena."
+ },
+ {
+  "q": "¿Cuánto vale \\(\\lim_{x\\to+\\infty} x\\,e^{-x}\\)?",
+  "o": [
+   "\\(+\\infty\\)",
+   "\\(-\\infty\\)",
+   "1",
+   "0"
+  ],
+  "c": 3,
+  "e": "x/eˣ: la exponencial crece mucho más deprisa (L'Hôpital)."
+ },
+ {
+  "q": "¿Cuánto vale \\(\\lim_{x\\to-\\infty} x\\,e^{x}\\)?",
+  "o": [
+   "0",
+   "\\(-\\infty\\)",
+   "1",
+   "\\(+\\infty\\)"
+  ],
+  "c": 0,
+  "e": "x/e⁻ˣ con L'Hôpital: 1/(−e⁻ˣ) → 0."
+ },
+ {
+  "q": "¿Qué curvatura tiene \\(f(x) = e^x\\)?",
+  "o": [
+   "Cóncava ∪ en todo ℝ",
+   "Cóncava ∩ en todo ℝ",
+   "Tiene una inflexión en x = 0",
+   "Cambia en x = 1"
+  ],
+  "c": 0,
+  "e": "f″(x) = eˣ &gt; 0."
+ },
+ {
+  "q": "El signo de \\(f(x) = x\\,e^x\\) es el mismo que el de…",
+  "o": [
+   "Siempre positivo",
+   "x",
+   "x + 1",
+   "eˣ"
+  ],
+  "c": 1,
+  "e": "eˣ &gt; 0, así que el signo lo decide x."
+ },
+ {
+  "q": "En el modelo \\(N(t) = N_0\\,e^{kt}\\), si k &gt; 0 la población…",
+  "o": [
+   "Es constante",
+   "Crece",
+   "Decrece",
+   "Se anula"
+  ],
+  "c": 1,
+  "e": "Es un crecimiento exponencial."
+ },
+ {
+  "q": "¿Qué simetría tiene \\(f(x) = e^{-x^2}\\)?",
+  "o": [
+   "Es par",
+   "Respecto a y = x",
+   "Es impar",
+   "Ninguna"
+  ],
+  "c": 0,
+  "e": "f(−x) = e^(−x²) = f(x)."
+ },
+ {
+  "q": "¿Cuánto vale \\(\\lim_{x\\to+\\infty}\\dfrac{e^x}{x^3}\\)?",
+  "o": [
+   "0",
+   "3",
+   "1",
+   "\\(+\\infty\\)"
+  ],
+  "c": 3,
+  "e": "La exponencial gana a cualquier potencia."
+ },
+ {
+  "q": "¿Cuál es la derivada de \\(e^{-x}\\)?",
+  "o": [
+   "\\(-x\\,e^{-x-1}\\)",
+   "\\(-e^{-x}\\)",
+   "\\(e^{x}\\)",
+   "\\(e^{-x}\\)"
+  ],
+  "c": 1,
+  "e": "g(x) = −x, g′(x) = −1."
+ },
+ {
+  "q": "¿Por qué punto pasan todas las funciones \\(f(x) = a^x\\)?",
+  "o": [
+   "(1, 0)",
+   "(0, 0)",
+   "(0, 1)",
+   "(1, 1)"
+  ],
+  "c": 2,
+  "e": "a⁰ = 1."
+ },
+ {
+  "q": "¿Qué asíntota tiene \\(f(x) = e^{-x}\\)?",
+  "o": [
+   "AH y = 0 cuando x → −∞",
+   "AV x = 0",
+   "No tiene",
+   "AH y = 0 cuando x → +∞"
+  ],
+  "c": 3,
+  "e": "e⁻ˣ → 0 cuando x → +∞."
+ }
+];
+
+const BANCO_APLICACION = [
+ {
+  "q": "¿Cuál es el mínimo de \\(f(x) = x\\,e^x\\)?",
+  "o": [
+   "\\(\\left(1, e\\right)\\)",
+   "\\(\\left(-2, -\\frac{2}{e^2}\\right)\\)",
+   "\\(\\left(-1, -\\frac1e\\right)\\)",
+   "(0, 0)"
+  ],
+  "c": 2,
+  "e": "f′ = (x + 1)eˣ: − antes de −1, + después."
+ },
+ {
+  "q": "¿Dónde tiene un punto de inflexión \\(f(x) = x\\,e^x\\)?",
+  "o": [
+   "No tiene",
+   "\\(\\left(-2, -\\frac{2}{e^2}\\right)\\)",
+   "\\(\\left(-1, -\\frac1e\\right)\\)",
+   "(0, 0)"
+  ],
+  "c": 1,
+  "e": "f″ = (x + 2)eˣ cambia de signo en −2."
+ },
+ {
+  "q": "¿Dónde tiene un máximo \\(f(x) = x\\,e^{-x}\\)?",
+  "o": [
+   "\\(\\left(-1, -e\\right)\\)",
+   "\\(\\left(2, \\frac{2}{e^2}\\right)\\)",
+   "(0, 0)",
+   "\\(\\left(1, \\frac1e\\right)\\)"
+  ],
+  "c": 3,
+  "e": "f′ = (1 − x)e⁻ˣ: + antes de 1 y − después."
+ },
+ {
+  "q": "¿Cuál es el máximo de \\(f(x) = e^{-x^2}\\)?",
+  "o": [
+   "No tiene",
+   "(0, 0)",
+   "(1, 1/e)",
+   "(0, 1)"
+  ],
+  "c": 3,
+  "e": "f′ = −2x e^(−x²): + para x &lt; 0, − para x &gt; 0."
+ },
+ {
+  "q": "¿En qué abscisas tiene inflexión \\(f(x) = e^{-x^2}\\)?",
+  "o": [
+   "\\(x = \\pm 1\\)",
+   "\\(x = \\pm\\frac{1}{\\sqrt2}\\)",
+   "\\(x = \\pm\\sqrt2\\)",
+   "x = 0"
+  ],
+  "c": 1,
+  "e": "f″ = (4x² − 2)e^(−x²) = 0 ⇒ x² = 1/2."
+ },
+ {
+  "q": "¿Cuál es el mínimo de \\(f(x) = (x-1)e^x\\)?",
+  "o": [
+   "No tiene",
+   "(−1, −2/e)",
+   "(1, 0)",
+   "(0, −1)"
+  ],
+  "c": 3,
+  "e": "f′ = x eˣ: mínimo en 0; f(0) = −1."
+ },
+ {
+  "q": "¿Cuál es el mínimo de \\(f(x) = e^{2x} - 2e^x\\)?",
+  "o": [
+   "(0, −1)",
+   "(0, 1)",
+   "(ln 2, 0)",
+   "(1, e² − 2e)"
+  ],
+  "c": 0,
+  "e": "f′ = 2eˣ(eˣ − 1) = 0 ⇒ x = 0; f(0) = 1 − 2 = −1."
+ },
+ {
+  "q": "¿Cuál es la asíntota horizontal de \\(f(x) = e^{-x} + 2\\) cuando x → +∞?",
+  "o": [
+   "y = 3",
+   "y = 0",
+   "y = 2",
+   "No tiene"
+  ],
+  "c": 2,
+  "e": "e⁻ˣ → 0."
+ },
+ {
+  "q": "¿Dónde tiene un máximo relativo \\(f(x) = x^2e^{-x}\\)?",
+  "o": [
+   "\\(\\left(2, \\frac{4}{e^2}\\right)\\)",
+   "No tiene",
+   "\\(\\left(1, \\frac1e\\right)\\)",
+   "(0, 0)"
+  ],
+  "c": 0,
+  "e": "f′ = x(2 − x)e⁻ˣ: mínimo en 0 y máximo en 2."
+ },
+ {
+  "q": "\\(C(t) = 5t\\,e^{-t/2}\\). ¿En qué instante es máxima la concentración?",
+  "o": [
+   "t = 5 h",
+   "t = 0.5 h",
+   "t = 1 h",
+   "t = 2 h"
+  ],
+  "c": 3,
+  "e": "C′ = 5e^(−t/2)(1 − t/2) = 0 ⇒ t = 2."
+ },
+ {
+  "q": "\\(C(t) = 5t\\,e^{-t/2}\\). ¿Cuál es la concentración máxima (con dos decimales)?",
+  "o": [
+   "1.84 mg/L",
+   "5 mg/L",
+   "10 mg/L",
+   "3.68 mg/L"
+  ],
+  "c": 3,
+  "e": "C(2) = 10/e ≈ 3.68."
+ },
+ {
+  "q": "Una población sigue \\(N(t) = 200\\,e^{0.1t}\\). ¿Cuántos individuos hay a las 10 horas?",
+  "o": [
+   "≈ 220",
+   "≈ 400",
+   "≈ 544",
+   "≈ 2000"
+  ],
+  "c": 2,
+  "e": "N(10) = 200e ≈ 543.7."
+ },
+ {
+  "q": "Con \\(N(t) = 200\\,e^{0.1t}\\), ¿cuándo se duplica la población?",
+  "o": [
+   "t = 20 h",
+   "t = 10 h",
+   "t = ln 2 / 0.1 ≈ 6.93 h",
+   "t = 2 h"
+  ],
+  "c": 2,
+  "e": "e^(0.1t) = 2 ⇒ 0.1t = ln 2."
+ },
+ {
+  "q": "¿En qué punto corta al eje OY \\(f(x) = e^x - 3\\)?",
+  "o": [
+   "(0, 1)",
+   "(0, −2)",
+   "(0, −3)",
+   "(ln 3, 0)"
+  ],
+  "c": 1,
+  "e": "f(0) = 1 − 3."
+ },
+ {
+  "q": "¿En qué punto corta al eje OX \\(f(x) = e^x - 3\\)?",
+  "o": [
+   "(3, 0)",
+   "(0, −2)",
+   "\\((\\ln 3, 0)\\)",
+   "No lo corta"
+  ],
+  "c": 2,
+  "e": "eˣ = 3 ⇒ x = ln 3."
+ },
+ {
+  "q": "¿Cuánto vale \\(\\lim_{x\\to+\\infty}\\dfrac{x+1}{e^x}\\)?",
+  "o": [
+   "\\(+\\infty\\)",
+   "1",
+   "0",
+   "e"
+  ],
+  "c": 2,
+  "e": "L'Hôpital: 1/eˣ → 0."
+ }
+];
+
+let orden = [];
+let idx = 0;
+let ok = 0, bad = 0;
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function empezar(){
+  const nombre = document.getElementById('nombre').value.trim();
+  if(!nombre){ alert('Escribe tu nombre para empezar.'); return; }
+  document.getElementById('gate').style.display='none';
+  document.getElementById('quiz').style.display='block';
+  generarSecuencia();
+  mostrarPregunta();
+}
+
+function generarSecuencia(){
+  const todas = shuffle(
+    BANCO_TEORIA.map(x=>({...x,tipo:'teoria'})).concat(
+    BANCO_APLICACION.map(x=>({...x,tipo:'aplicacion'})))
+  );
+  orden = todas;
+  idx = 0; ok = 0; bad = 0;
+}
+
+function mostrarPregunta(){
+  if(idx >= orden.length){ generarSecuencia(); }
+  const item = orden[idx];
+  document.getElementById('contador').textContent = `Pregunta ${idx+1}`;
+  document.getElementById('okcount').textContent = ok;
+  document.getElementById('badcount').textContent = bad;
+  const tag = document.getElementById('qtag');
+  tag.textContent = item.tipo === 'teoria' ? 'Teoría' : 'Aplicación';
+  tag.className = 'qtag ' + item.tipo;
+  document.getElementById('qtext').innerHTML = item.q;
+
+  const opciones = shuffle(item.o.map((texto,i)=>({texto, esCorrecta:i===item.c})));
+  const cont = document.getElementById('opciones');
+  cont.innerHTML='';
+  opciones.forEach(op=>{
+    const btn = document.createElement('button');
+    btn.className='opt';
+    btn.innerHTML = op.texto;
+    btn.onclick = ()=>responder(btn, op.esCorrecta, opciones, cont);
+    cont.appendChild(btn);
+  });
+
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('btnSiguiente').disabled = true;
+  if(window.MathJax){ MathJax.typesetClear([cont, document.getElementById('qtext')]); MathJax.typesetPromise([cont, document.getElementById('qtext')]); }
+}
+
+function responder(btnPulsado, esCorrecta, opciones, cont){
+  const botones = cont.querySelectorAll('.opt');
+  botones.forEach(b=>b.disabled=true);
+  botones.forEach((b,i)=>{
+    if(opciones[i].esCorrecta) b.classList.add('correcta');
+  });
+  if(!esCorrecta) btnPulsado.classList.add('incorrecta');
+
+  const fb = document.getElementById('feedback');
+  const exp = orden[idx] && orden[idx].e ? '<div style="margin-top:8px;font-weight:400">💡 ' + orden[idx].e + '</div>' : '';
+  if(esCorrecta){
+    ok++;
+    fb.innerHTML = '<b>✓ Correcto.</b>' + exp;
+    fb.className = 'feedback show ok';
+  } else {
+    bad++;
+    fb.innerHTML = '<b>✗ No es correcto. La respuesta correcta está marcada en verde.</b>' + exp;
+    fb.className = 'feedback show bad';
+  }
+  if(window.MathJax && MathJax.typesetPromise){ MathJax.typesetPromise([fb]).catch(()=>{}); }
+  document.getElementById('okcount').textContent = ok;
+  document.getElementById('badcount').textContent = bad;
+  document.getElementById('btnSiguiente').disabled = false;
+}
+
+function siguiente(){
+  idx++;
+  mostrarPregunta();
+}
+</script>
+
+</body>
+</html>
